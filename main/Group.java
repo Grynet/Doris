@@ -15,17 +15,17 @@ public class Group {
 	}
 	
 	public double getAverageAge(){
-		double result = 0;
+		int sum = 0;
 		for(Patient patient : PATIENTS){
-			result +=patient.getAGE();
+			sum +=patient.getAge();
 		}		
-		return result/PATIENTS.size();
+		return sum/PATIENTS.size();
 	}
 	
 	public double getAverageNumOfDiseases(){
 		int sum = 0;
 		for(Patient p : PATIENTS){
-			sum = p.getNumIDCs();
+			sum += p.getNumIDCs();
 		}
 		return sum/PATIENTS.size();
 	}
@@ -33,7 +33,7 @@ public class Group {
 	public double getAverageNumOfDrugs(){
 		int sum = 0;
 		for(Patient p : PATIENTS){
-			sum = p.getNumATCs();
+			sum += p.getNumATCs();
 		}
 		return sum/PATIENTS.size();
 	}
