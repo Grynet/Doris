@@ -23,6 +23,7 @@ public class DrugVizualizer extends JFrame {
 	private String groupingSelected;
 	private String xAxisSelected;
 	private String yAxisSelected;
+	private JTextField codeInputField;
 
 	DrugVizualizer() {
 		super("Doris 1.0");
@@ -41,7 +42,7 @@ public class DrugVizualizer extends JFrame {
 		JLabel groupByLabel = new JLabel("Group by: ");
 
 		JLabel CodeLabel = new JLabel("Code: ");
-		JTextField codeInputField = new JTextField(10);
+		codeInputField = new JTextField(10);
 		northPanel.add(CodeLabel);
 		northPanel.add(codeInputField);
 		northPanel.add(groupByLabel);
@@ -53,7 +54,7 @@ public class DrugVizualizer extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				groupingSelected = (String) groupByDropDown
 						.getSelectedItem();
-				updateChart(groupingSelected, xAxisSelected, yAxisSelected);
+				updateChart(codeInputField.getText(), groupingSelected, xAxisSelected, yAxisSelected);
 			}
 		});
 		// X-Axis ComboBox
@@ -64,7 +65,7 @@ public class DrugVizualizer extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				xAxisSelected = (String) xAxisDropDown
 						.getSelectedItem();
-				updateChart(groupingSelected, xAxisSelected, yAxisSelected);
+				updateChart(codeInputField.getText(), groupingSelected, xAxisSelected, yAxisSelected);
 			}
 		});
 		// Y-Axis ComboBox
@@ -75,7 +76,7 @@ public class DrugVizualizer extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				yAxisSelected = (String) yAxisDropDown
 						.getSelectedItem();
-				updateChart(groupingSelected, xAxisSelected, yAxisSelected);
+				updateChart(codeInputField.getText(), groupingSelected, xAxisSelected, yAxisSelected);
 			}
 		});
 
@@ -98,17 +99,38 @@ public class DrugVizualizer extends JFrame {
 	/**
 	 *
 	 * Anropas varje gång någonting nytt skall visas. T.ex. vid val av sätt att
-	 * gruppera, val av x-axel, val av y-axel.
+	 * gruppera, val av x-axel, val av y-axel. groupBy är en String och är för
+	 * tillfället antingen "Drug" eller "Disease". code är den inskrivna koden
+	 * som grupperingarna skall göras efter.
 	 * 
+	 * @param code
 	 * @param groupBy
 	 * @param xAxis
 	 * @param yAxis
 	 */
-	private void updateChart(String groupBy, String xAxis, String yAxis) {
-		ArrayList<Group> groupList = getListOfGroups(groupBy, xAxis, yAxis);
-		for (Group group : groupList) {
-			addSerie(dataset, group.getX, group.getY, group.getSize,
-					group.getName);
+	private void updateChart(String code, String groupBy, String xAxis, String yAxis) {
+		ArrayList<Group> groupList = getListOfGroups(code, groupBy);
+		switch (xAxis) {
+			case "Average number of drugs per patient":
+				for (Group group : groupList) {
+					addSerie(dataset, group.getDrugAverage, group.getCorrelation,
+						group.getSize, group.getName);
+				}
+				break;
+			case "Average number of diseases per patient":
+				for (Group group : groupList) {
+					addSerie(dataset, group.getDiseaseAverage,
+						group.getCorrelation, group.getSize, group.getName);
+				}
+				break;
+			case "Average age":
+				for (Group group : groupList) {
+					addSerie(dataset, group.getAgeAverage, group.getCorrelation,
+						group.getSize, group.getName);
+				}
+				break;
+			default:
+				break;
 		}
 		createBubbleChart(groupBy, xAxis, yAxis, dataset);
 	}
