@@ -1,58 +1,48 @@
 package main;
-import java.time.LocalDateTime;
-import java.util.HashSet;
 
+import java.util.LinkedList;
+import java.util.List;
 
-public class Group {
-	private final HashSet<Patient> patients;
+public class Group {	
+	final private LinkedList<Patient> PATIENTS;	
 	
-	public Group(){
-		patients = new HashSet<Patient>();
+	public Group(final LinkedList<Patient> patients){
+		this.PATIENTS = patients;		
 	}
 	
-	public Group(final HashSet<Patient> patients){
-		this.patients = patients;
+	public int getSize(){
+		return PATIENTS.size();
 	}
 	
-	public boolean addPatient(Patient patient){
-		return patients.add(patient);
+	public double getAverageAge(){
+		double result = 0;
+		for(Patient patient : PATIENTS){
+			result +=patient.getAGE();
+		}		
+		return result/PATIENTS.size();
 	}
 	
-	
-	
-	public HashSet<Patient> getPatientsWithCode(String code){
-		HashSet<Patient> result = new HashSet<Patient>();
-		for(Patient p : patients){
-			if(p.containsCode(code)){
-				result.add(p);
-				break;
-			}
-				
-			
+	public double getAverageNumOfDiseases(){
+		int sum = 0;
+		for(Patient p : PATIENTS){
+			sum = p.getNumIDCs();
 		}
-		return result; 
+		return sum/PATIENTS.size();
 	}
 	
-	public HashSet<Patient> getPatientsWithCodeAfter(String code, LocalDateTime time){
-		HashSet<Patient> result = new HashSet<Patient>();
-		for(Patient p : patients){
-			if(p.containsCodeAfter(code, time)){
-				result.add(p);
-				break;
-			}
+	public double getAverageNumOfDrugs(){
+		int sum = 0;
+		for(Patient p : PATIENTS){
+			sum = p.getNumATCs();
 		}
-		return result; 
+		return sum/PATIENTS.size();
 	}
 	
-	public HashSet<Patient> getPatientsWithCodeBefore(String code, LocalDateTime time){
-		HashSet<Patient> result = new HashSet<Patient>();
-		for(Patient p : patients){
-			if(p.containsCodeBefore(code, time)){
-				result.add(p);
-				break;
-			}
-		}
-		return result; 
+	public List<Group> getATCSubgroups(){
+		return null;
 	}
-
+	
+	public List<Group> getIDCSubgroups(){
+		return null;
+	}	
 }
