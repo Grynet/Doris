@@ -26,8 +26,8 @@ public class Producer {
 		BlockingQueue<String> work = new ArrayBlockingQueue<String>(BUFFER_SIZE);
 		ConcurrentHashMap<Integer, Patient> result = new ConcurrentHashMap<>(BUFFER_SIZE);		
 		
-		int numXcutors = (CPU_COUNT > 1) ? CPU_COUNT : 1;
-		for(int i = 0; i < numXcutors; i++){
+		
+		for(int i = 0; i < CPU_COUNT+1; i++){
 			XCUTOR.execute(new CSVPatientParser(work, result));
 		}	
 		
@@ -46,7 +46,7 @@ public class Producer {
 			return null;
 		
 		
-		return new Group(new LinkedList<Patient>(result.values()));
+		return new Group("Main Group", new LinkedList<Patient>(result.values()));
 	}
 
 }

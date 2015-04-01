@@ -5,8 +5,10 @@ import java.util.List;
 
 public class Group {	
 	final private LinkedList<Patient> PATIENTS;	
+	final private String GROUP_CLASSIFIER; //code that classifies group, main group is just called Main Group
 	
-	public Group(final LinkedList<Patient> patients){
+	public Group(String code, final LinkedList<Patient> patients){
+		GROUP_CLASSIFIER = code;
 		this.PATIENTS = patients;		
 	}
 	
@@ -17,6 +19,10 @@ public class Group {
 				return p;
 		}
 		return null;
+	}
+	
+	public String getClassifier(){
+		return GROUP_CLASSIFIER;
 	}
 	
 	public int getSize(){

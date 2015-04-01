@@ -32,8 +32,7 @@ public class CSVPatientParser implements Runnable {
 		LocalDateTime time;
 		String code;
 		
-		while(true){
-			System.out.printf("Work: %d | Output: %d %n", WORK_QUEUE.size(), OUTPUT.size());
+		while(true){			
 			try {	
 				if((line = WORK_QUEUE.take()) == POISON_PILL){
 					WORK_QUEUE.put(POISON_PILL);						
@@ -46,11 +45,8 @@ public class CSVPatientParser implements Runnable {
 				
 				id = Integer.parseInt(values[0]);
 				time = stringToDateTime(values[1]);
-				code = values[2];
-				
-				/*
-				 * Gör om nedanstående 54-60
-				 */
+				code = values[2];				
+			
 				patient = new Patient(id);
 				patient.addCode(code, time);
 				
