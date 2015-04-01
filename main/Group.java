@@ -10,28 +10,29 @@ public class Group {
 		this.PATIENTS = patients;		
 	}
 	
+	//OBS getPatient() endast för testning, kommer tas bort
+	public Patient getPatient(int id){
+		for(Patient p : PATIENTS){
+			if(p.getID() == id)
+				return p;
+		}
+		return null;
+	}
+	
 	public int getSize(){
 		return PATIENTS.size();
-	}
-	
-	public double getAverageAge(){
-		int sum = 0;
-		for(Patient patient : PATIENTS){
-			sum +=patient.getAge();
-		}		
-		return sum/PATIENTS.size();
-	}
+	}	
 	
 	public double getAverageNumOfDiseases(){
-		int sum = 0;
+		double sum = 0;
 		for(Patient p : PATIENTS){
-			sum += p.getNumIDCs();
+			sum += p.getNumICDs();
 		}
 		return sum/PATIENTS.size();
 	}
 	
 	public double getAverageNumOfDrugs(){
-		int sum = 0;
+		double sum = 0;
 		for(Patient p : PATIENTS){
 			sum += p.getNumATCs();
 		}
