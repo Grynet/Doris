@@ -11,12 +11,19 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import main.Group;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.DefaultXYZDataset;
 import org.jfree.data.xy.XYZDataset;
-
+/**
+ * GUI for Doris 1.0
+ * 
+ * @author Xceed
+ *
+ */
 public class DrugVizualizer extends JFrame {
 	private ChartPanel chart;
 	private DefaultXYZDataset dataset;
@@ -28,9 +35,6 @@ public class DrugVizualizer extends JFrame {
 	DrugVizualizer() {
 		super("Doris 1.0");
 		dataset = createDataset();
-		addSerie(dataset, 1.0, 4.0, 2.0, "Ett");
-		addSerie(dataset, 2.0, 5.0, 3.0, "Två");
-		addSerie(dataset, 15.0, 2.0, 1.0, "Tre");
 
 		/********************************************************************************************
 		 * Setup JFrame
@@ -98,10 +102,10 @@ public class DrugVizualizer extends JFrame {
 
 	/**
 	 *
-	 * Anropas varje gång någonting nytt skall visas. T.ex. vid val av sätt att
-	 * gruppera, val av x-axel, val av y-axel. groupBy är en String och är för
-	 * tillfället antingen "Drug" eller "Disease". code är den inskrivna koden
-	 * som grupperingarna skall göras efter.
+	 * Invoked every time something new will be displayed. For example the
+	 * selection of ways of grouping, the choice of the x-axis, the choice of
+	 * the y-axis. "groupBy" is a String, and is currently either "Drug" or
+	 * "Disease". "code" is the entered code as groupings shall be made after.
 	 * 
 	 * @param code
 	 * @param groupBy
@@ -113,20 +117,14 @@ public class DrugVizualizer extends JFrame {
 		switch (xAxis) {
 			case "Average number of drugs per patient":
 				for (Group group : groupList) {
-					addSerie(dataset, group.getDrugAverage, group.getCorrelation,
-						group.getSize, group.getName);
+					addSerie(dataset, group.getAverageNumOfDrugs(), group.getCorrelation(),
+						group.getSize(), group.getName());
 				}
 				break;
 			case "Average number of diseases per patient":
 				for (Group group : groupList) {
-					addSerie(dataset, group.getDiseaseAverage,
-						group.getCorrelation, group.getSize, group.getName);
-				}
-				break;
-			case "Average age":
-				for (Group group : groupList) {
-					addSerie(dataset, group.getAgeAverage, group.getCorrelation,
-						group.getSize, group.getName);
+					addSerie(dataset, group.getAverageNumOfDiseases(),
+						group.getCorrelation(), group.getSize(), group.getName());
 				}
 				break;
 			default:
@@ -136,7 +134,7 @@ public class DrugVizualizer extends JFrame {
 	}
 
 	/**
-	 * Hjälpmetod för "updateChart".
+	 * Support Method for "updateChart".
 	 * 
 	 * @param chartHeadline
 	 * @param xAxisLabel
@@ -157,7 +155,7 @@ public class DrugVizualizer extends JFrame {
 	}
 
 	/**
-	 * Hjälpmetod för "updateChart".
+	 * Support Method for "updateChart".
 	 * 
 	 * @param ds
 	 * @param x
