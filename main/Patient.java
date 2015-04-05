@@ -71,29 +71,29 @@ public class Patient {
 		return new HashMap<String, LocalDateTime>(ICD_CODES);
 	}
 	
-	public HashSet<String> getATCsAfterICD(String icdCode){
-		LocalDateTime icdTime = ICD_CODES.get(icdCode);
-		HashSet<String> atcAfterICD = new HashSet<String>();	
-		
-		if(icdTime != null){
-			for(String atcCode : ATC_CODES.keySet()){
-				if(ATC_CODES.get(atcCode).isAfter(icdTime))
-					atcAfterICD.add(atcCode);
-			}		
-		}
-		return atcAfterICD;		
-	}
-	
-	public HashSet<String> getICDsBeforeATC(String atcCode){
+	public HashSet<String> getICDsAfterATC(String atcCode){
 		LocalDateTime atcTime = ATC_CODES.get(atcCode);
-		HashSet<String> icdBeforeATC = new HashSet<String>();	
+		HashSet<String> icdAfterATC = new HashSet<String>();	
 		
 		if(atcTime != null){
 			for(String icdCode : ICD_CODES.keySet()){
 				if(ICD_CODES.get(icdCode).isAfter(atcTime))
-					icdBeforeATC.add(icdCode);
+					icdAfterATC.add(icdCode);
 			}		
 		}
-		return icdBeforeATC;		
+		return icdAfterATC;		
+	}
+	
+	public HashSet<String> getATCsBeforeICD(String icdCode){
+		LocalDateTime icdTime = ICD_CODES.get(icdCode);
+		HashSet<String> atcBeforeICD = new HashSet<String>();	
+		
+		if(icdTime != null){
+			for(String atcCode : ATC_CODES.keySet()){
+				if(ATC_CODES.get(atcCode).isBefore(icdTime))
+					atcBeforeICD.add(atcCode);
+			}		
+		}
+		return atcBeforeICD;		
 	}
 }
