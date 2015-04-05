@@ -1,55 +1,90 @@
 package main;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 
-public class Group {	
-	final private LinkedList<Patient> PATIENTS;	
-	final private String GROUP_CLASSIFIER; //code that classifies group, main group is just called Main Group
+import main.support.*;
+
+/**
+ *Group.BEHAVIOUR determines what type of codes are stored in SUBGROUPS.
+ * 
+ * @author Fredrik Nystad
+ *
+ */
+
+public class Group {
+	final protected String GROUP_CLASSIFIER;
+	final protected LinkedList<Integer> PATIENTS;	
+	final private HashMap<String, HashSet<Integer>> SUBGROUPS = new HashMap<>(); 
+	final private CodeTypeBehaviour BEHAVIOUR;
 	
-	public Group(String code, final LinkedList<Patient> patients){
-		GROUP_CLASSIFIER = code;
-		this.PATIENTS = patients;		
+	public Group(String groupCode, HashSet<Integer> patientIDs) throws IllegalArgumentException{
+		GROUP_CLASSIFIER = groupCode;
+		PATIENTS = new LinkedList<Integer>(patientIDs);	
+		if(groupCode.endsWith("_ICD"))
+			BEHAVIOUR = new ICDBehaviour();
+		else if (groupCode.endsWith("_ATC"))
+			BEHAVIOUR = new ATCBehaviour();			
+		else 
+			throw new IllegalArgumentException("Unknown code type: "+groupCode);
+		setSubgroups(patientIDs);
 	}
 	
-	//OBS getPatient() endast för testning, kommer tas bort
-	public Patient getPatient(int id){
-		for(Patient p : PATIENTS){
-			if(p.getID() == id)
-				return p;
-		}
-		return null;
-	}
+	private void setSubgroups(HashSet<Integer> patientIDs){		
+		for(int patientID : patientIDs){
+			Patient patient = Population.getPatient(patientID);
+			HashSet<String> atcAfter = BEHAVIOUR.getCodes(patient,GROUP_CLASSIFIER);
+			for(String atc : atcAfter){
+				HashSet<Integer> groupPatients;
+				if((groupPatients = SUBGROUPS.get(atc)) != null)
+					groupPatients.add(patientID);
+				else{
+					groupPatients = new HashSet<Integer>();
+					groupPatients.add(patientID);
+					SUBGROUPS.put(atc, groupPatients);
+				}					
+			}
+		}		
+	}		
 	
 	public String getClassifier(){
 		return GROUP_CLASSIFIER;
 	}
 	
-	public int getSize(){
+	public int getSize(){		
 		return PATIENTS.size();
 	}	
 	
-	public double getAverageNumOfDiseases(){
-		double sum = 0;
-		for(Patient p : PATIENTS){
-			sum += p.getNumICDs();
+	public double getCorrelationToGroup(Group group){		
+		double observed = PATIENTS.size();
+		double expected = Population.getCodeGroupPercentage(GROUP_CLASSIFIER) * group.getSize(); //watch if Main method return -1
+		
+		return Math.log((observed+0.5)/(expected+0.5)) / Math.log(2);		
+	}
+	
+	public double getAverageNumATCs(){
+		double totalATCs = 0;
+		for(Integer i : PATIENTS){
+			totalATCs += Population.getPatient(i).getNumATCs();
 		}
-		return sum/PATIENTS.size();
+		return totalATCs/PATIENTS.size();
 	}
 	
-	public double getAverageNumOfDrugs(){
-		double sum = 0;
-		for(Patient p : PATIENTS){
-			sum += p.getNumATCs();
+	public double getAverageNumICDs(){
+		double totalICDs = 0;
+		for(Integer i : PATIENTS){
+			totalICDs += Population.getPatient(i).getNumICDs();
 		}
-		return sum/PATIENTS.size();
+		return totalICDs/PATIENTS.size();
 	}
 	
-	public List<Group> getATCSubgroups(){
-		return null;
+	public LinkedList<Group> getSubgroups(){
+		LinkedList<Group> subgroups = new LinkedList<>();
+		for(String groupCode : SUBGROUPS.keySet()){
+			Group group = new Group(groupCode, new HashSet<Integer>(SUBGROUPS.get(groupCode)));
+			subgroups.add(group);
+		}		
+		return subgroups;
 	}
-	
-	public List<Group> getIDCSubgroups(){
-		return null;
-	}	
 }
