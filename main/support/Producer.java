@@ -17,7 +17,7 @@ import java.util.concurrent.Executors;
 import main.Patient;
 
 public class Producer {
-	final private ExecutorService XCUTOR; //add latch or something to shutdown threads and guard state, 
+	final private ExecutorService XCUTOR; 
 	final private int CPU_COUNT;
 	final private int BUFFER_SIZE = 100000;
 	
@@ -26,7 +26,7 @@ public class Producer {
 		XCUTOR = Executors.newFixedThreadPool(CPU_COUNT);
 	}
 	
-	//dela upp i mindre delfunktioner
+	//make more effective and increase readability
 	
 	public void parseCSVFile(String filePath, ConcurrentHashMap<Integer,Patient> patientMap, ConcurrentHashMap<String, HashSet<Integer>> codeGroupMap) throws InterruptedException, FileNotFoundException, IOException{
 		BlockingQueue<String> work = new ArrayBlockingQueue<String>(BUFFER_SIZE);			

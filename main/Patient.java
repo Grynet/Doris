@@ -90,7 +90,7 @@ public class Patient {
 		
 		if(atcTime != null){
 			for(String icdCode : ICD_CODES.keySet()){
-				if(ATC_CODES.get(atcCode).isAfter(atcTime))
+				if(ICD_CODES.get(icdCode).isAfter(atcTime))
 					icdBeforeATC.add(icdCode);
 			}		
 		}

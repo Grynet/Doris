@@ -34,15 +34,15 @@ public class Group {
 	private void setSubgroups(HashSet<Integer> patientIDs){		
 		for(int patientID : patientIDs){
 			Patient patient = Population.getPatient(patientID);
-			HashSet<String> atcAfter = BEHAVIOUR.getCodes(patient,GROUP_CLASSIFIER);
-			for(String atc : atcAfter){
+			HashSet<String> codes = BEHAVIOUR.getCodes(patient,GROUP_CLASSIFIER);
+			for(String code : codes){
 				HashSet<Integer> groupPatients;
-				if((groupPatients = SUBGROUPS.get(atc)) != null)
+				if((groupPatients = SUBGROUPS.get(code)) != null)
 					groupPatients.add(patientID);
 				else{
 					groupPatients = new HashSet<Integer>();
 					groupPatients.add(patientID);
-					SUBGROUPS.put(atc, groupPatients);
+					SUBGROUPS.put(code, groupPatients);
 				}					
 			}
 		}		
@@ -77,6 +77,10 @@ public class Group {
 			totalICDs += Population.getPatient(i).getNumICDs();
 		}
 		return totalICDs/PATIENTS.size();
+	}
+	
+	public int numSubgroups(){
+		return SUBGROUPS.size();
 	}
 	
 	public LinkedList<Group> getSubgroups(){
