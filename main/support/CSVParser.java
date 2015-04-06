@@ -16,14 +16,14 @@ public class CSVParser implements Runnable {
 	final public static String POISON_PILL = new String();
 	final private BlockingQueue<String> WORK_QUEUE;	
 	final private ConcurrentHashMap<Integer, HashMap<String, LocalDateTime>> PATIENT_MAP;
-	final private ConcurrentHashMap<String, HashSet<Integer>> codeGroupMap;
+	final private ConcurrentHashMap<String, HashSet<Integer>> CODE_GROUPS;
 	final private CountDownLatch LATCH;
 	
-	public CSVParser(BlockingQueue<String> WORK_QUEUE, CountDownLatch latch, ConcurrentHashMap<Integer, HashMap<String, LocalDateTime>> patientCodes, ConcurrentHashMap<String, HashSet<Integer>> codeGroupMap){		
+	public CSVParser(BlockingQueue<String> WORK_QUEUE, CountDownLatch LATCH, ConcurrentHashMap<Integer, HashMap<String, LocalDateTime>> PATIENT_MAP, ConcurrentHashMap<String, HashSet<Integer>> CODE_GROUPS){		
 		this.WORK_QUEUE = WORK_QUEUE;
-		this.LATCH = latch;
-		this.PATIENT_MAP = patientCodes;
-		this.codeGroupMap = codeGroupMap;
+		this.LATCH = LATCH;
+		this.PATIENT_MAP = PATIENT_MAP;
+		this.CODE_GROUPS = CODE_GROUPS;
 	}	
 
 	@Override
@@ -59,19 +59,6 @@ public class CSVParser implements Runnable {
 			LATCH.countDown();
 		}
 	}
-	
-
-	
-	private void terminate() throws InterruptedException{		
-		try{
-			WORK_QUEUE.put(POISON_PILL);
-		}catch(InterruptedException e){		
-			Random r = new Random();
-			int sleep = r.nextInt(1000)+50;
-			Thread.sleep(sleep);
-			WORK_QUEUE.put(POISON_PILL);				
-		}
-	}
 		
 	private void addValues(int patientID, LocalDateTime time, String code) {
 		
@@ -90,19 +77,16 @@ public class CSVParser implements Runnable {
 		}
 		
 		//Add code to codeGroup and add the patientID to that group
-		HashSet<Integer> codeGroupValues = codeGroupMap.get(code);
+		HashSet<Integer> codeGroupValues = CODE_GROUPS.get(code);
 		if(codeGroupValues == null){
-			codeGroupMap.putIfAbsent(code, new HashSet<Integer>());
-			codeGroupValues = codeGroupMap.get(code);			
+			CODE_GROUPS.putIfAbsent(code, new HashSet<Integer>());
+			codeGroupValues = CODE_GROUPS.get(code);			
 		}
 		
 		synchronized(codeGroupValues){
 			codeGroupValues.add(patientID);
 		}
 	}
-		
-	
-
 	
 	
 	private LocalDateTime stringToDateTime (String time) throws DateTimeParseException{
@@ -110,6 +94,17 @@ public class CSVParser implements Runnable {
 		LocalDateTime dateTime = LocalDateTime.parse(time, formatter);		
 		return dateTime;
 		
+	}
+	
+	private void terminate() throws InterruptedException{		
+		try{
+			WORK_QUEUE.put(POISON_PILL);
+		}catch(InterruptedException e){		
+			Random r = new Random();
+			int sleep = r.nextInt(1000)+50;
+			Thread.sleep(sleep);
+			WORK_QUEUE.put(POISON_PILL);				
+		}
 	}
 
 }
