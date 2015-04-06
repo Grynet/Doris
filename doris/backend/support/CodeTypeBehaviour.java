@@ -1,8 +1,8 @@
-package main.support;
+package doris.backend.support;
 
 import java.util.HashSet;
 
-import main.Patient;
+import doris.backend.Patient;
 
 /**
  * This is a support class for the Group class and it's used to determine what will be contained in its subgroups.  

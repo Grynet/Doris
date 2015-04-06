@@ -1,10 +1,10 @@
-package main;
+package doris.backend;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import main.support.*;
+import doris.backend.support.*;
 
 /**
  *Group.BEHAVIOUR determines what type of codes are stored in SUBGROUPS.

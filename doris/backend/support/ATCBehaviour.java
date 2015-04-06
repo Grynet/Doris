@@ -1,8 +1,8 @@
-package main.support;
+package doris.backend.support;
 
 import java.util.HashSet;
 
-import main.Patient;
+import doris.backend.Patient;
 
 /**
  * This CodeTypeBehaviour implementation will retrieve all the ICD codes that after the specified ATC code. 

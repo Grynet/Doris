@@ -1,4 +1,4 @@
-package main;
+package doris.backend;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 
-import main.support.Producer;
+import doris.backend.support.Producer;
 
 public final class Population {
 

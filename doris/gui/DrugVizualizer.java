@@ -1,3 +1,4 @@
+package doris.gui;
 import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
@@ -11,13 +12,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import main.Group;
-
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.DefaultXYZDataset;
 import org.jfree.data.xy.XYZDataset;
+
+import doris.backend.Group;
 /**
  * GUI for Doris 1.0
  * 

@@ -1,4 +1,4 @@
-package main.support;
+package doris.backend.support;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -14,7 +14,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import main.Patient;
+import doris.backend.Patient;
 
 public class Producer {
 	final private ExecutorService XCUTOR; 
