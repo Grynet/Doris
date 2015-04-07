@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Semaphore;
 
 import doris.backend.support.Producer;
 
@@ -13,23 +12,16 @@ public final class Population {
 	final static private ConcurrentHashMap<Integer, Patient> PATIENTS = new ConcurrentHashMap<>();
 	final static private ConcurrentHashMap<String, HashSet<Integer>> CODE_GROUPS = new ConcurrentHashMap<>();
 	final static private Producer PRODUCER = new Producer();
-	final static private Semaphore producerLock = new Semaphore(1); //makes sure PRODUCER only used for one operation at a time
+	
 	
 	private Population(){}
 	
-	public static void init(String filePath) {
-		try {
-			producerLock.acquire();
-			PRODUCER.parseCSVFile(filePath, PATIENTS, CODE_GROUPS);			
-		} catch (InterruptedException e) {			
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {		
-			e.printStackTrace();
-		} catch (IOException e) {			
-			e.printStackTrace();
-		} finally{
-			producerLock.release();
+	public static void init(String filePath) throws FileNotFoundException, InterruptedException, IOException {	
+		if(!PATIENTS.isEmpty()){		
+			PATIENTS.clear();	
+			CODE_GROUPS.clear();			
 		}		
+		PRODUCER.parseCSVFile(filePath, PATIENTS, CODE_GROUPS);		
 	}
 	
 	public static int getSize(){
