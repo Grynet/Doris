@@ -3,7 +3,7 @@ import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -19,6 +19,7 @@ import org.jfree.data.xy.DefaultXYZDataset;
 import org.jfree.data.xy.XYZDataset;
 
 import doris.backend.Group;
+import doris.backend.Population;
 /**
  * GUI for Doris 1.0
  * 
@@ -32,6 +33,8 @@ public class DrugVizualizer extends JFrame {
 	private String xAxisSelected;
 	private String yAxisSelected;
 	private JTextField codeInputField;
+	private JTextField pathInputField;
+	private JButton pathButton;
 
 	DrugVizualizer() {
 		super("Doris 1.0");
@@ -46,11 +49,28 @@ public class DrugVizualizer extends JFrame {
 		JPanel northPanel = new JPanel();
 		JLabel groupByLabel = new JLabel("Group by: ");
 
-		JLabel CodeLabel = new JLabel("Code: ");
+		JLabel codeLabel = new JLabel("Code: ");
 		codeInputField = new JTextField(10);
-		northPanel.add(CodeLabel);
+		
+		JLabel pathLabel = new JLabel("Path: ");
+		pathInputField = new JTextField(10);
+		pathButton = new JButton("PATH!!!");
+		pathButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				//System.out.println();
+				Population.init(pathInputField.getText());
+				//set all to editable
+			}
+			
+		});
+		northPanel.add(pathLabel);
+		northPanel.add(pathInputField);
+		northPanel.add(pathButton);
+		northPanel.add(codeLabel);
 		northPanel.add(codeInputField);
 		northPanel.add(groupByLabel);
+		
 		// GroupByComboBox
 		String[] groupToSortBy = { "Drug", "Disease", "Age" };
 		JComboBox<String> groupByDropDown = new JComboBox<String>(
@@ -84,7 +104,7 @@ public class DrugVizualizer extends JFrame {
 				updateChart(codeInputField.getText(), groupingSelected, xAxisSelected, yAxisSelected);
 			}
 		});
-
+		createBubbleChart("No code entered", "No code entered", "No code entered", dataset);
 		northPanel.add(groupByDropDown);
 		add(northPanel, BorderLayout.NORTH);
 		// Center
@@ -114,24 +134,30 @@ public class DrugVizualizer extends JFrame {
 	 * @param yAxis
 	 */
 	private void updateChart(String code, String groupBy, String xAxis, String yAxis) {
-		ArrayList<Group> groupList = getListOfGroups(code, groupBy);
+		System.out.println(code);
+		System.out.println(Population.getSize());
+		Population.getCodeGroupSize(code);
+		
+		Group mainGroup = Population.getCodeGroup(code);
+		System.out.println(mainGroup.getClassifier());
+		LinkedList<Group> groupList = mainGroup.getSubgroups();
 		switch (xAxis) {
 			case "Average number of drugs per patient":
 				for (Group group : groupList) {
-					addSerie(dataset, group.getAverageNumOfDrugs(), group.getCorrelation(),
-						group.getSize(), group.getName());
+					addSerie(dataset, group.getAverageNumATCs(), group.getCorrelationToGroup(mainGroup),
+						group.getSize(), group.getClassifier());
 				}
 				break;
 			case "Average number of diseases per patient":
 				for (Group group : groupList) {
-					addSerie(dataset, group.getAverageNumOfDiseases(),
-						group.getCorrelation(), group.getSize(), group.getName());
+					addSerie(dataset, group.getAverageNumICDs(),
+						group.getCorrelationToGroup(mainGroup), group.getSize(), group.getClassifier());
 				}
 				break;
 			default:
 				break;
 		}
-		createBubbleChart(groupBy, xAxis, yAxis, dataset);
+		createBubbleChart(code, xAxis, yAxis, dataset);
 	}
 
 	/**
@@ -175,6 +201,7 @@ public class DrugVizualizer extends JFrame {
 
 	public static void main(String[] args) {
 		new DrugVizualizer();
+
 	}
 
 }
