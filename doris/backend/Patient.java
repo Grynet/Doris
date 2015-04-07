@@ -9,12 +9,6 @@ public class Patient {
 	final private HashMap<String, LocalDateTime> ATC_CODES; //LocalDateTime == first report of Code
 	final private HashMap<String, LocalDateTime> ICD_CODES; //LocalDateTime == first report of Code
 	
-	public Patient(int id){
-		ID=id;
-		ATC_CODES = new HashMap<String, LocalDateTime>();
-		ICD_CODES = new HashMap<String, LocalDateTime>();
-	}
-	
 	public Patient(int id, HashMap<String, LocalDateTime> codes) throws IllegalArgumentException{
 		ATC_CODES = new HashMap<String, LocalDateTime>();
 		ICD_CODES = new HashMap<String, LocalDateTime>();

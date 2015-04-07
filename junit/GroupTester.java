@@ -10,7 +10,7 @@ public class GroupTester {
 	
 	@Before
 	public void setUp() throws Exception {	
-		Population.init("E:/Dropbox/Delade mappar/FoT/Kandidatuppsats/Deluppgifter/Deliverable 5/test.csv");
+		Population.init("K:/test.csv");
 	}
 
 	
@@ -23,7 +23,7 @@ public class GroupTester {
 		int size = group.getSize();
 		double groupAverageATCs = group.getAverageNumATCs();
 		double groupAverageICDs = group.getAverageNumICDs();
-		int numSubgroups = group.numSubgroups();
+		int numSubgroups = group.getNumSubgroups();
 		
 		System.out
 				.printf("Group: %s%nGroup size: %d%nGroup average ATCs: %,.2f%nGroup average ICDs: %,.2f%nNumSubgroups: %d%n%n",

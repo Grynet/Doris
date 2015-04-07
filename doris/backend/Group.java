@@ -79,7 +79,7 @@ public class Group {
 		return totalICDs/PATIENTS.size();
 	}
 	
-	public int numSubgroups(){
+	public int getNumSubgroups(){
 		return SUBGROUPS.size();
 	}
 	
