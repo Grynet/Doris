@@ -2,6 +2,7 @@ package junit;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +19,11 @@ public class PopulationTester {
 	public void initPopulationTest() {		
 		System.gc();
 		long startTime = System.nanoTime();		
-		Population.init("K:/D642-raw-data-dd.csv");	
+		try {
+			Population.init("K:/D642-raw-data-dd.csv");
+		} catch (InterruptedException | IOException e) {			
+			e.printStackTrace();
+		}	
 		double endTime = (System.nanoTime() - startTime) / 1000000000.0;
 		int size = Population.getSize();
 		double averageNumATcs = Population.getAverageNumATCs();

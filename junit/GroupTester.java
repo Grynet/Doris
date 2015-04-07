@@ -10,7 +10,7 @@ public class GroupTester {
 	
 	@Before
 	public void setUp() throws Exception {	
-		Population.init("K:/test.csv");
+		Population.init("F:/test.csv");
 	}
 
 	

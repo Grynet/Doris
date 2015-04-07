@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.LinkedList;
 
 import javax.swing.JButton;
@@ -107,6 +108,12 @@ public class DrugVizualizer extends JFrame {
 					} catch (FileNotFoundException fnf) {
 						JOptionPane.showMessageDialog(null,
 								"Could not find the file");
+					} catch (InterruptedException e) {
+						JOptionPane.showMessageDialog(null,
+								"Instantiation interrupted unexpectedly");
+					} catch (IOException e) {
+						JOptionPane.showMessageDialog(null,
+								"IOException while instantiating");
 					}
 				}
 			}
@@ -163,10 +170,9 @@ public class DrugVizualizer extends JFrame {
 	 * @param yAxis
 	 */
 	private void updateChart(String code, String xAxis, String yAxis) {
-		if (code.equals("")) {
+		if (code.equals("") || !(code.endsWith("_ATC")|| !code.endsWith("_ICD"))) {
 			JOptionPane.showMessageDialog(null, "You must input a code");
-		} else {
-			Population.getCodeGroupSize(code);
+		} else {			
 			Group mainGroup = Population.getCodeGroup(code);
 			LinkedList<Group> groupList = mainGroup.getSubgroups();
 			switch (xAxis) {
