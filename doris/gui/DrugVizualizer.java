@@ -85,7 +85,9 @@ public class DrugVizualizer extends JFrame {
 				JFileChooser fc = new JFileChooser();
 				fc.showDialog(null, "Choose file");
 				File selectedFile = fc.getSelectedFile();
-				pathInputField.setText(selectedFile.getAbsolutePath());
+				if (selectedFile != null) {
+					pathInputField.setText(selectedFile.getAbsolutePath());
+				}
 			}
 		});
 		pathButton = new JButton("Load file-path");
@@ -114,7 +116,11 @@ public class DrugVizualizer extends JFrame {
 					} catch (IOException e) {
 						JOptionPane.showMessageDialog(null,
 								"IOException while instantiating");
-					}
+					}/*
+					 * catch (ArrayIndexOutOfBoundsException e){
+					 * JOptionPane.showMessageDialog(null,
+					 * "Array index out of bounds"); }
+					 */
 				}
 			}
 
@@ -170,30 +176,36 @@ public class DrugVizualizer extends JFrame {
 	 * @param yAxis
 	 */
 	private void updateChart(String code, String xAxis, String yAxis) {
-		if (code.equals("") || !(code.endsWith("_ATC")|| !code.endsWith("_ICD"))) {
+		code = code.replaceAll("\\", "/");
+		if (code.equals("")
+				|| (!(code.endsWith("_ATC")) && !(code.endsWith("_ICD")))) {
 			JOptionPane.showMessageDialog(null, "You must input a code");
-		} else {			
-			Group mainGroup = Population.getCodeGroup(code);
-			LinkedList<Group> groupList = mainGroup.getSubgroups();
-			switch (xAxis) {
-			case "Average number of drugs per patient":
-				for (Group group : groupList) {
-					addSerie(dataset, group.getAverageNumATCs(),
-							group.getCorrelationToGroup(mainGroup),
-							group.getSize(), group.getClassifier());
+		} else {
+			try {
+				Group mainGroup = Population.getCodeGroup(code);
+				LinkedList<Group> groupList = mainGroup.getSubgroups();
+				switch (xAxis) {
+				case "Average number of drugs per patient":
+					for (Group group : groupList) {
+						addSerie(dataset, group.getAverageNumATCs(),
+								group.getCorrelationToGroup(mainGroup),
+								group.getSize(), group.getClassifier());
+					}
+					break;
+				case "Average number of diseases per patient":
+					for (Group group : groupList) {
+						addSerie(dataset, group.getAverageNumICDs(),
+								group.getCorrelationToGroup(mainGroup),
+								group.getSize(), group.getClassifier());
+					}
+					break;
+				default:
+					break;
 				}
-				break;
-			case "Average number of diseases per patient":
-				for (Group group : groupList) {
-					addSerie(dataset, group.getAverageNumICDs(),
-							group.getCorrelationToGroup(mainGroup),
-							group.getSize(), group.getClassifier());
-				}
-				break;
-			default:
-				break;
+				createBubbleChart(code, xAxis, yAxis, dataset);
+			} catch (NullPointerException e) {
+				JOptionPane.showMessageDialog(null, "Nobody with that code.");
 			}
-			createBubbleChart(code, xAxis, yAxis, dataset);
 		}
 	}
 
