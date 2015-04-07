@@ -1,14 +1,19 @@
 package doris.gui;
+
 import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.LinkedList;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -20,6 +25,7 @@ import org.jfree.data.xy.XYZDataset;
 
 import doris.backend.Group;
 import doris.backend.Population;
+
 /**
  * GUI for Doris 1.0
  * 
@@ -29,12 +35,11 @@ import doris.backend.Population;
 public class DrugVizualizer extends JFrame {
 	private ChartPanel chart;
 	private DefaultXYZDataset dataset;
-	private String groupingSelected;
 	private String xAxisSelected;
-	private String yAxisSelected;
 	private JTextField codeInputField;
 	private JTextField pathInputField;
 	private JButton pathButton;
+	private JComboBox<String> xAxisDropDown;
 
 	DrugVizualizer() {
 		super("Doris 1.0");
@@ -45,74 +50,100 @@ public class DrugVizualizer extends JFrame {
 		 */
 
 		// North Panel
-
 		JPanel northPanel = new JPanel();
-		JLabel groupByLabel = new JLabel("Group by: ");
-
+		northPanel.setLayout(new BorderLayout());
+		JPanel upperNorthPanel = new JPanel();
+		northPanel.add(upperNorthPanel, BorderLayout.NORTH);
+		JPanel lowerNorthPanel = new JPanel();
+		northPanel.add(lowerNorthPanel, BorderLayout.SOUTH);
 		JLabel codeLabel = new JLabel("Code: ");
 		codeInputField = new JTextField(10);
-		
+		codeInputField.setEditable(false);
+		JButton codeButton = new JButton("Group by code");
+		codeButton.setEnabled(false);
+		/*
+		 * ActionListener for codeButton
+		 */
+		codeButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				updateChart(codeInputField.getText(), xAxisSelected,
+						"Correlation");
+			}
+		});
+
 		JLabel pathLabel = new JLabel("Path: ");
-		pathInputField = new JTextField(10);
-		pathButton = new JButton("PATH!!!");
-		pathButton.addActionListener(new ActionListener(){
+		pathInputField = new JTextField(20);
+		JButton browseButton = new JButton("Browse file");
+		/*
+		 * ActionListener for browseButton
+		 */
+		browseButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				fc.showDialog(null, "Choose file");
+				File selectedFile = fc.getSelectedFile();
+				pathInputField.setText(selectedFile.getAbsolutePath());
+			}
+		});
+		pathButton = new JButton("Load file-path");
+		/*
+		 * ActionListener for pathButton
+		 */
+		pathButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				//System.out.println();
-				Population.init(pathInputField.getText());
-				//set all to editable
+				if (pathInputField.getText().equals("")) {
+					JOptionPane.showMessageDialog(null,
+							"You must input a file path");
+				} else {
+					try {
+						Population.init(pathInputField.getText());
+						// set all components to editable
+						codeInputField.setEditable(true);
+						xAxisDropDown.setEnabled(true);
+						codeButton.setEnabled(true);
+					} catch (FileNotFoundException fnf) {
+						JOptionPane.showMessageDialog(null,
+								"Could not find the file");
+					}
+				}
 			}
-			
+
 		});
-		northPanel.add(pathLabel);
-		northPanel.add(pathInputField);
-		northPanel.add(pathButton);
-		northPanel.add(codeLabel);
-		northPanel.add(codeInputField);
-		northPanel.add(groupByLabel);
-		
-		// GroupByComboBox
-		String[] groupToSortBy = { "Drug", "Disease", "Age" };
-		JComboBox<String> groupByDropDown = new JComboBox<String>(
-				groupToSortBy);
-		groupByDropDown.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				groupingSelected = (String) groupByDropDown
-						.getSelectedItem();
-				updateChart(codeInputField.getText(), groupingSelected, xAxisSelected, yAxisSelected);
-			}
-		});
+		upperNorthPanel.add(pathLabel);
+		upperNorthPanel.add(pathInputField);
+		upperNorthPanel.add(browseButton);
+		upperNorthPanel.add(pathButton);
+		lowerNorthPanel.add(codeLabel);
+		lowerNorthPanel.add(codeInputField);
+		lowerNorthPanel.add(codeButton);
+
 		// X-Axis ComboBox
-		String[] xToSortBy = { "Drug", "Disease", "Age" };
-		JComboBox<String> xAxisDropDown = new JComboBox<String>(
-				xToSortBy);
+		String[] xToSortBy = { "Average number of drugs per patient",
+				"Average number of diseases per patient" };
+		xAxisDropDown = new JComboBox<String>(xToSortBy);
+		xAxisDropDown.setEnabled(false);
+		/*
+		 * ActionListener for xAxisDropDown
+		 */
 		xAxisDropDown.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				xAxisSelected = (String) xAxisDropDown
-						.getSelectedItem();
-				updateChart(codeInputField.getText(), groupingSelected, xAxisSelected, yAxisSelected);
+				xAxisSelected = (String) xAxisDropDown.getSelectedItem();
+				updateChart(codeInputField.getText(), xAxisSelected,
+						"Correlation");
 			}
 		});
-		// Y-Axis ComboBox
-		String[] yToSortBy = { "Correlation" };
-		JComboBox<String> yAxisDropDown = new JComboBox<String>(
-				yToSortBy);
-		yAxisDropDown.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				yAxisSelected = (String) yAxisDropDown
-						.getSelectedItem();
-				updateChart(codeInputField.getText(), groupingSelected, xAxisSelected, yAxisSelected);
-			}
-		});
-		createBubbleChart("No code entered", "No code entered", "No code entered", dataset);
-		northPanel.add(groupByDropDown);
+		createBubbleChart("", "", "Correlation", dataset);
 		add(northPanel, BorderLayout.NORTH);
 		// Center
 		add(chart, BorderLayout.CENTER);
-		// West
-		add(xAxisDropDown, BorderLayout.WEST);
 		// South
-		add(yAxisDropDown, BorderLayout.SOUTH);
+		JPanel southPanel = new JPanel();
+		add(southPanel, BorderLayout.SOUTH);
+		southPanel.add(new JLabel("X-axis"));
+		southPanel.add(xAxisDropDown);
 		setVisible(true);
 		setExtendedState(Frame.MAXIMIZED_BOTH);
 		pack();
@@ -125,39 +156,39 @@ public class DrugVizualizer extends JFrame {
 	 *
 	 * Invoked every time something new will be displayed. For example the
 	 * selection of ways of grouping, the choice of the x-axis, the choice of
-	 * the y-axis. "groupBy" is a String, and is currently either "Drug" or
-	 * "Disease". "code" is the entered code as groupings shall be made after.
+	 * the y-axis. "code" is the entered code as groupings shall be made after.
 	 * 
 	 * @param code
-	 * @param groupBy
 	 * @param xAxis
 	 * @param yAxis
 	 */
-	private void updateChart(String code, String groupBy, String xAxis, String yAxis) {
-		System.out.println(code);
-		System.out.println(Population.getSize());
-		Population.getCodeGroupSize(code);
-		
-		Group mainGroup = Population.getCodeGroup(code);
-		System.out.println(mainGroup.getClassifier());
-		LinkedList<Group> groupList = mainGroup.getSubgroups();
-		switch (xAxis) {
+	private void updateChart(String code, String xAxis, String yAxis) {
+		if (code.equals("")) {
+			JOptionPane.showMessageDialog(null, "You must input a code");
+		} else {
+			Population.getCodeGroupSize(code);
+			Group mainGroup = Population.getCodeGroup(code);
+			LinkedList<Group> groupList = mainGroup.getSubgroups();
+			switch (xAxis) {
 			case "Average number of drugs per patient":
 				for (Group group : groupList) {
-					addSerie(dataset, group.getAverageNumATCs(), group.getCorrelationToGroup(mainGroup),
-						group.getSize(), group.getClassifier());
+					addSerie(dataset, group.getAverageNumATCs(),
+							group.getCorrelationToGroup(mainGroup),
+							group.getSize(), group.getClassifier());
 				}
 				break;
 			case "Average number of diseases per patient":
 				for (Group group : groupList) {
 					addSerie(dataset, group.getAverageNumICDs(),
-						group.getCorrelationToGroup(mainGroup), group.getSize(), group.getClassifier());
+							group.getCorrelationToGroup(mainGroup),
+							group.getSize(), group.getClassifier());
 				}
 				break;
 			default:
 				break;
+			}
+			createBubbleChart(code, xAxis, yAxis, dataset);
 		}
-		createBubbleChart(code, xAxis, yAxis, dataset);
 	}
 
 	/**
