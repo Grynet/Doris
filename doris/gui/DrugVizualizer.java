@@ -41,6 +41,7 @@ public class DrugVizualizer extends JFrame {
 	private JTextField codeInputField;
 	private JTextField pathInputField;
 	private JButton pathButton;
+	JPanel centerPanel;
 
 	DrugVizualizer() {
 		super("Doris 1.0");
@@ -151,10 +152,12 @@ public class DrugVizualizer extends JFrame {
 						"Correlation");
 			}
 		});
-		createBubbleChart("", "", "Correlation", dataset);
+		createBubbleChart("No code entered", "", "Correlation", dataset);
 		add(northPanel, BorderLayout.NORTH);
 		// Center
-		add(chart, BorderLayout.CENTER);
+		centerPanel = new JPanel();
+		add(centerPanel, BorderLayout.CENTER);
+		centerPanel.add(chart);
 		// South
 		JPanel southPanel = new JPanel();
 		add(southPanel, BorderLayout.SOUTH);
@@ -163,7 +166,7 @@ public class DrugVizualizer extends JFrame {
 		setVisible(true);
 		setExtendedState(Frame.MAXIMIZED_BOTH);
 		pack();
-		setResizable(false);
+		setResizable(true);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 	}
@@ -186,13 +189,24 @@ public class DrugVizualizer extends JFrame {
 			try {
 				Group mainGroup = Population.getCodeGroup(code);
 				LinkedList<Group> groupList = mainGroup.getSubgroups();
+				/**
+				 * Test series
+				 */
+				addSerie(dataset, 3, 3, 4, "Test");
+				//addSerie(dataset, 3, 3, 4, "Test3");
+				addSerie(dataset, 1, 0, 1, "Test2");
 				switch (xAxis) {
 				case "Average number of drugs per patient":
 					for (Group group : groupList) {
-						System.out.println("aver ATC " +group.getAverageNumATCs());
-						System.out.println("corelation " +group.getCorrelationToGroup(mainGroup));
-						System.out.println("Size " +group.getSize());
-						System.out.println("Classifier " +group.getClassifier());
+
+						System.out.println("aver ATC "
+								+ group.getAverageNumATCs());
+						System.out.println("corelation "
+								+ group.getCorrelationToGroup(mainGroup));
+						System.out.println("Size " + group.getSize());
+						System.out.println("Classifier "
+								+ group.getClassifier());
+
 						addSerie(dataset, group.getAverageNumATCs(),
 								group.getCorrelationToGroup(mainGroup),
 								group.getSize(), group.getClassifier());
@@ -200,6 +214,13 @@ public class DrugVizualizer extends JFrame {
 					break;
 				case "Average number of diseases per patient":
 					for (Group group : groupList) {
+						System.out.println("aver ICD "
+								+ group.getAverageNumICDs());
+						System.out.println("corelation "
+								+ group.getCorrelationToGroup(mainGroup));
+						System.out.println("Size " + group.getSize());
+						System.out.println("Classifier "
+								+ group.getClassifier());
 						addSerie(dataset, group.getAverageNumICDs(),
 								group.getCorrelationToGroup(mainGroup),
 								group.getSize(), group.getClassifier());
@@ -209,6 +230,10 @@ public class DrugVizualizer extends JFrame {
 					break;
 				}
 				createBubbleChart(code, xAxis, yAxis, dataset);
+				centerPanel.removeAll();
+				centerPanel.add(chart);
+				centerPanel.validate();
+				centerPanel.repaint();
 			} catch (NullPointerException e) {
 				JOptionPane.showMessageDialog(null, "Nobody with that code.");
 			}
@@ -228,6 +253,7 @@ public class DrugVizualizer extends JFrame {
 		JFreeChart bubbleChart = ChartFactory.createBubbleChart(chartHeadline,
 				xAxisLabel, yAxisLabel, dataset);
 		chart = new ChartPanel(bubbleChart);
+
 	}
 
 	private DefaultXYZDataset createDataset() {
