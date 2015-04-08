@@ -14,7 +14,8 @@ public class ICDBehaviour implements CodeTypeBehaviour{
 
 	@Override
 	public HashSet<String> getCodes(Patient patient, String code) {
-		return patient.getATCsBeforeICD(code);		
+		return patient.getATCs();
+		// return patient.getATCsBeforeICD(code);		
 	}
 	
 	
