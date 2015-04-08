@@ -15,7 +15,7 @@ public class ATCBehaviour implements CodeTypeBehaviour {
 
 	@Override
 	public HashSet<String> getCodes(Patient patient, String code) {
-		return patient.getICDsAfterATC(code);		
+		return patient.getICDs();	
+		// return patient.getICDsAfterATC(code);		
 	}
-
 }

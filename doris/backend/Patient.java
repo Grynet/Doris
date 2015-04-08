@@ -65,6 +65,10 @@ public class Patient {
 		return new HashMap<String, LocalDateTime>(ICD_CODES);
 	}
 	
+	public HashSet<String> getICDs(){		
+		return new HashSet<String>(ICD_CODES.keySet());		
+	}
+	
 	public HashSet<String> getICDsAfterATC(String atcCode){
 		LocalDateTime atcTime = ATC_CODES.get(atcCode);
 		HashSet<String> icdAfterATC = new HashSet<String>();	
@@ -76,6 +80,10 @@ public class Patient {
 			}		
 		}
 		return icdAfterATC;		
+	}
+	
+	public HashSet<String> getATCs(){		
+		return new HashSet<String>(ATC_CODES.keySet());		
 	}
 	
 	public HashSet<String> getATCsBeforeICD(String icdCode){
