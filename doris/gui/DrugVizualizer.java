@@ -102,7 +102,8 @@ public class DrugVizualizer extends JFrame {
 							"You must input a file path");
 				} else {
 					try {
-						Population.init(pathInputField.getText());
+						Population.init(pathInputField.getText().replaceAll(
+								"\\\\", "/"));
 						// set all components to editable
 						codeInputField.setEditable(true);
 						xAxisDropDown.setEnabled(true);
@@ -176,7 +177,6 @@ public class DrugVizualizer extends JFrame {
 	 * @param yAxis
 	 */
 	private void updateChart(String code, String xAxis, String yAxis) {
-		code = code.replaceAll("\\", "/");
 		if (code.equals("")
 				|| (!(code.endsWith("_ATC")) && !(code.endsWith("_ICD")))) {
 			JOptionPane.showMessageDialog(null, "You must input a code");
