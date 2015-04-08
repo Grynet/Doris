@@ -35,12 +35,12 @@ import doris.backend.Population;
  */
 public class DrugVizualizer extends JFrame {
 	private ChartPanel chart;
+	private JComboBox<String> xAxisDropDown;
 	private DefaultXYZDataset dataset;
 	private String xAxisSelected;
 	private JTextField codeInputField;
 	private JTextField pathInputField;
 	private JButton pathButton;
-	private JComboBox<String> xAxisDropDown;
 
 	DrugVizualizer() {
 		super("Doris 1.0");
@@ -68,8 +68,10 @@ public class DrugVizualizer extends JFrame {
 		codeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				updateChart(codeInputField.getText(), xAxisSelected,
-						"Correlation");
+				updateChart(
+						codeInputField.getText(),
+						xAxisSelected = (String) xAxisDropDown
+								.getSelectedItem(), "Correlation");
 			}
 		});
 
@@ -187,6 +189,10 @@ public class DrugVizualizer extends JFrame {
 				switch (xAxis) {
 				case "Average number of drugs per patient":
 					for (Group group : groupList) {
+						System.out.println("aver ATC " +group.getAverageNumATCs());
+						System.out.println("corelation " +group.getCorrelationToGroup(mainGroup));
+						System.out.println("Size " +group.getSize());
+						System.out.println("Classifier " +group.getClassifier());
 						addSerie(dataset, group.getAverageNumATCs(),
 								group.getCorrelationToGroup(mainGroup),
 								group.getSize(), group.getClassifier());
