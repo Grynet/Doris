@@ -14,13 +14,39 @@ public class GroupTester {
 	
 	@Before
 	public void setUp() throws Exception {	
-		Population.init("C:/Users/Tobias/Dropbox/FoT/Kandidatuppsats/Deluppgifter/Deliverable 5/test.csv");
+		Population.init("K:/D642-raw-data-dd.csv");
 	}
 
 	
+//	@Test
+//	public void testGetClass(){
+//		Group group = Population.getCodeGroup("N02AA01_ATC");	
+//		assertNotEquals(group, null);
+//		
+//		String groupClassifier = group.getClassifier();
+//		int size = group.getSize();
+//		double groupAverageATCs = group.getAverageNumATCs();
+//		double groupAverageICDs = group.getAverageNumICDs();
+//		int numSubgroups = group.getNumSubgroups();
+//		LinkedList<Group> groups = group.getSubgroups();
+//		
+//		System.out
+//				.printf("Group: %s%nGroup size: %d%nGroup average ATCs: %,.2f%nGroup average ICDs: %,.2f%nNumSubgroups: %d%n%n",
+//						groupClassifier, size, groupAverageATCs,
+//						groupAverageICDs, numSubgroups);
+//		
+//		for(Group g : groups){
+//			System.out.printf("Subgroup: %s | Size: %d%n", g.getClassifier(), g.getSize());
+//		}		
+//	}
+	
+	/**
+	 * This test can be used to check what the lowest or highest correlation value is for a subgroup of a group
+	 */
+	
 	@Test
-	public void testGetClass(){
-		Group group = Population.getCodeGroup("N02AA01_ATC");	
+	public void testCorrelation(){
+		Group group = Population.getCodeGroup("B05BB02_ATC");	
 		assertNotEquals(group, null);
 		
 		String groupClassifier = group.getClassifier();
@@ -35,10 +61,16 @@ public class GroupTester {
 						groupClassifier, size, groupAverageATCs,
 						groupAverageICDs, numSubgroups);
 		
+		Group subgroup = null;
+		double subgroupCorrelation = 0;
 		for(Group g : groups){
-			System.out.printf("Subgroup: %s | Size: %d%n", g.getClassifier(), g.getSize());
-		}	
+			if(g.getCorrelationToGroup(group) > subgroupCorrelation){ // if > retrive HighestCorrelation else if < retrieve lowest correlation
+				subgroup = g;
+				subgroupCorrelation = g.getCorrelationToGroup(group);
+			}			
+		}
 		
+		System.out.printf("Chosen subgroups: %s | Size: %d | Correlation: %,.2f%n", subgroup.getClassifier(), subgroup.getSize(), subgroupCorrelation);
 	}
 
 }
