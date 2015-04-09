@@ -21,8 +21,8 @@ import doris.backend.Population;
  */
 public class GroupTester {
 	
-	String filePath = "K:/D642-raw-data-dd.csv";
-	String groupCode = "B05BB02_ATC";
+	String filePath = "F:/test.csv";
+	String groupCode = "N02AA01_ATC";
 	
 	@Before
 	public void setUp() {			
@@ -38,7 +38,7 @@ public class GroupTester {
 	 * them out and print some fact about the group.
 	 */
 
-//	@Test
+	@Test
 	public void testGetSubgroups(){
 		Group group = Population.getCodeGroup(groupCode);	
 		assertNotEquals(group, null);
@@ -63,7 +63,7 @@ public class GroupTester {
 				highestCorrelation = corr;
 			else if(corr < lowestCorrelation)
 				lowestCorrelation = corr;
-			System.out.printf("Subgroup: %s | Size: %d%n", g.getClassifier(), g.getSize());
+			System.out.printf("Subgroup: %s | Size: %d | Correlation: %,.2f%n", g.getClassifier(), g.getSize(), corr);
 		}	
 		
 		System.out
@@ -72,10 +72,12 @@ public class GroupTester {
 				+ "Group average ATCs: %,.2f%n"
 				+ "Group average ICDs: %,.2f%n"
 				+ "NumSubgroups: %d%n"
+				+ "Lowest Correlation subgroup: %,.2f%n"
+				+ "Highest Correlation subgroup: %,.2f%n"
 				+ "Time to retrive subgroups from group: %,.2fs%n%n",
 				
 				groupClassifier, size, groupAverageATCs,
-				groupAverageICDs, numSubgroups, endTime);
+				groupAverageICDs, numSubgroups, lowestCorrelation, highestCorrelation, endTime);
 	}
 	
 	/**
@@ -83,7 +85,7 @@ public class GroupTester {
 	 * value is for a subgroup of a group.
 	 */
 	
-	@Test
+//	@Test
 	public void testCorrelation(){
 		Group group = Population.getCodeGroup(groupCode);	
 		assertNotEquals(group, null);
@@ -93,7 +95,7 @@ public class GroupTester {
 		double groupAverageATCs = group.getAverageNumATCs();
 		double groupAverageICDs = group.getAverageNumICDs();
 		int numSubgroups = group.getNumSubgroups();
-		LinkedList<Group> groups = group.getSubgroups();
+		LinkedList<Group> groups = group.getSubgroups();		
 		
 		System.out
 				.printf("Group: %s%nGroup size: %d%nGroup average ATCs: %,.2f%nGroup average ICDs: %,.2f%nNumSubgroups: %d%n%n",
@@ -109,7 +111,7 @@ public class GroupTester {
 			if(corr > highestSubgroupCorrelation){
 				highestSubgroup = g;
 				highestSubgroupCorrelation = corr;
-			}else if(corr < lowestSubgroupCorrelation){
+			}if(corr < lowestSubgroupCorrelation){
 				lowestSubgroup = g;
 				lowestSubgroupCorrelation = corr;			
 			}			
