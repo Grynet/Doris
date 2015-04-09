@@ -2,7 +2,6 @@ package doris.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Frame;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -208,32 +207,17 @@ public class DrugVizualizer extends JFrame {
 				addSerie(dataset, 3, 3, 2, "Tesewewt");
 				addSerie(dataset, 3, 3, 2.1, "Test3ew");
 				addSerie(dataset, -8, -3, 1, "Test2dsfd");
+
 				switch (xAxis) {
 				case "Average number of drugs per patient":
 					for (Group group : groupList) {
-
-						System.out.println("aver ATC "
-								+ group.getAverageNumATCs());
-						System.out.println("corelation "
-								+ group.getCorrelationToGroup(mainGroup));
-						System.out.println("Size " + group.getSize());
-						System.out.println("Classifier "
-								+ group.getClassifier());
-
 						addSerie(dataset, group.getAverageNumATCs(),
 								group.getCorrelationToGroup(mainGroup),
 								group.getSize(), group.getClassifier());
 					}
 					break;
 				case "Average number of diseases per patient":
-					for (Group group : groupList) {
-						System.out.println("aver ICD "
-								+ group.getAverageNumICDs());
-						System.out.println("corelation "
-								+ group.getCorrelationToGroup(mainGroup));
-						System.out.println("Size " + group.getSize());
-						System.out.println("Classifier "
-								+ group.getClassifier());
+					for (Group group : groupList) {						
 						addSerie(dataset, group.getAverageNumICDs(),
 								group.getCorrelationToGroup(mainGroup),
 								group.getSize(), group.getClassifier());
