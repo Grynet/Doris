@@ -21,8 +21,8 @@ import doris.backend.Population;
  */
 public class GroupTester {
 	
-	String filePath = "F:/test.csv";
-	String groupCode = "N02AA01_ATC";
+	String filePath = "K:/D642-raw-data-dd.csv";
+	String groupCode = "I509_ICD";
 	
 	@Before
 	public void setUp() {			
@@ -95,12 +95,19 @@ public class GroupTester {
 		double groupAverageATCs = group.getAverageNumATCs();
 		double groupAverageICDs = group.getAverageNumICDs();
 		int numSubgroups = group.getNumSubgroups();
-		LinkedList<Group> groups = group.getSubgroups();		
+		System.gc();
+		long startTime = System.nanoTime();		
+		LinkedList<Group> groups = group.getSubgroups();
+		double endTime = (System.nanoTime() - startTime) / 1000000000.0;			
 		
 		System.out
-				.printf("Group: %s%nGroup size: %d%nGroup average ATCs: %,.2f%nGroup average ICDs: %,.2f%nNumSubgroups: %d%n%n",
+				.printf("Group: %s%nGroup size: %d%n"
+						+ "Group average ATCs: %,.2f%n"
+						+ "Group average ICDs: %,.2f%n"
+						+ "NumSubgroups: %d%n"
+						+ "Time to retrieve: %,.2fs%n%n",
 						groupClassifier, size, groupAverageATCs,
-						groupAverageICDs, numSubgroups);
+						groupAverageICDs, numSubgroups, endTime);
 		
 		Group highestSubgroup = null;
 		double highestSubgroupCorrelation =  Double.MIN_VALUE;
@@ -123,6 +130,61 @@ public class GroupTester {
 		System.out.printf("%nLowest correlating subgroup: %s%n"
 				+ "Size: %d%n"
 				+ "Correlation: %,.2f%n", lowestSubgroup.getClassifier(), lowestSubgroup.getSize(), lowestSubgroupCorrelation);
+	}
+	
+	/**
+	 * Prints out information about group and the highesy/lowest ICD/ATC average,
+	 */
+	
+//	@Test
+	public void testAverage(){
+		Group group = Population.getCodeGroup(groupCode);	
+		assertNotEquals(group, null);
+		
+		String groupClassifier = group.getClassifier();
+		int size = group.getSize();
+		double groupAverageATCs = group.getAverageNumATCs();
+		double groupAverageICDs = group.getAverageNumICDs();
+		int numSubgroups = group.getNumSubgroups();
+		System.gc();
+		long startTime = System.nanoTime();		
+		LinkedList<Group> groups = group.getSubgroups();
+		double endTime = (System.nanoTime() - startTime) / 1000000000.0;			
+		
+		System.out
+				.printf("Group: %s%nGroup size: %d%n"
+						+ "Group average ATCs: %,.2f%n"
+						+ "Group average ICDs: %,.2f%n"
+						+ "NumSubgroups: %d%n"
+						+ "Time to retrieve: %,.2fs%n%n",
+						groupClassifier, size, groupAverageATCs,
+						groupAverageICDs, numSubgroups, endTime);
+		
+
+		double highestICD =  Double.MIN_VALUE;		
+		double lowestICD =  Double.MAX_VALUE;
+		double highestATC =  Double.MIN_VALUE;		
+		double lowestATC =  Double.MAX_VALUE;
+		for(Group g : groups){			
+			double icdAverage = g.getAverageNumICDs();
+			double atcAverage = g.getAverageNumATCs();
+			if(icdAverage > highestICD){				
+				highestICD = icdAverage;
+			}if(icdAverage < lowestICD){				
+				lowestICD = icdAverage;			
+			}
+			
+			if(atcAverage > highestATC){				
+				highestATC = atcAverage;
+			}if(atcAverage < lowestATC){				
+				lowestATC = atcAverage;			
+			}			
+		}
+			
+		System.out.printf("Highest ICD average: subgroup: %,.2f%n", highestICD);				
+		System.out.printf("Lowest ICD average: subgroup: %,.2f%n", lowestICD);	
+		System.out.printf("Highest ATC average: subgroup: %,.2f%n", highestATC);				
+		System.out.printf("Lowest ATC average: subgroup: %,.2f%n", lowestATC);	
 	}
 
 }
