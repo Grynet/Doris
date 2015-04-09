@@ -58,7 +58,7 @@ public class Group {
 	
 	public double getCorrelationToGroup(Group group){		
 		double observed = PATIENTS.size();
-		double expected = Population.getCodeGroupPercentage(GROUP_CLASSIFIER) * group.getSize(); //watch if Main method return -1
+		double expected = Population.getCodeGroupPercentage(GROUP_CLASSIFIER) * group.getSize(); 
 		
 		return Math.log((observed+0.5)/(expected+0.5)) / Math.log(2);		
 	}

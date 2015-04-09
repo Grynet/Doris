@@ -66,7 +66,7 @@ public final class Population {
 	
 	public static double getCodeGroupPercentage(String code){
 		HashSet<Integer> codeGroup = null;
-		double percentage = -1;
+		double percentage = 0;
 		
 		if((codeGroup = CODE_GROUPS.get(code))!= null)
 			percentage = (double) codeGroup.size() / getSize();
