@@ -192,35 +192,19 @@ public class DrugVizualizer extends JFrame {
 				/**
 				 * Test series
 				 */
-				addSerie(dataset, 3, 3, 4, "Test");
+//				addSerie(dataset, 3, 3, 4, "Test");
 				//addSerie(dataset, 3, 3, 4, "Test3");
-				addSerie(dataset, 1, 0, 1, "Test2");
+//				addSerie(dataset, 1, 0, 1, "Test2");
 				switch (xAxis) {
 				case "Average number of drugs per patient":
 					for (Group group : groupList) {
-
-						System.out.println("aver ATC "
-								+ group.getAverageNumATCs());
-						System.out.println("corelation "
-								+ group.getCorrelationToGroup(mainGroup));
-						System.out.println("Size " + group.getSize());
-						System.out.println("Classifier "
-								+ group.getClassifier());
-
 						addSerie(dataset, group.getAverageNumATCs(),
 								group.getCorrelationToGroup(mainGroup),
 								group.getSize(), group.getClassifier());
 					}
 					break;
 				case "Average number of diseases per patient":
-					for (Group group : groupList) {
-						System.out.println("aver ICD "
-								+ group.getAverageNumICDs());
-						System.out.println("corelation "
-								+ group.getCorrelationToGroup(mainGroup));
-						System.out.println("Size " + group.getSize());
-						System.out.println("Classifier "
-								+ group.getClassifier());
+					for (Group group : groupList) {						
 						addSerie(dataset, group.getAverageNumICDs(),
 								group.getCorrelationToGroup(mainGroup),
 								group.getSize(), group.getClassifier());
