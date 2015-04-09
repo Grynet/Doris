@@ -189,12 +189,7 @@ public class DrugVizualizer extends JFrame {
 			try {
 				Group mainGroup = Population.getCodeGroup(code);
 				LinkedList<Group> groupList = mainGroup.getSubgroups();
-				/**
-				 * Test series
-				 */
-//				addSerie(dataset, 3, 3, 4, "Test");
-				//addSerie(dataset, 3, 3, 4, "Test3");
-//				addSerie(dataset, 1, 0, 1, "Test2");
+
 				switch (xAxis) {
 				case "Average number of drugs per patient":
 					for (Group group : groupList) {
