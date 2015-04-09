@@ -21,8 +21,8 @@ import doris.backend.Population;
  */
 public class GroupTester {
 	
-	String filePath = "K:/D642-raw-data-dd.csv";
-	String groupCode = "I509_ICD";
+	String filePath = "F:/test.csv"; //Choose the correct path to the file
+	String groupCode = "N02AA01_ATC";
 	
 	@Before
 	public void setUp() {			
