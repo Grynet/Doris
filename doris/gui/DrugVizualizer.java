@@ -1,6 +1,7 @@
 package doris.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,7 +22,11 @@ import javax.swing.JTextField;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.xy.DefaultXYZDataset;
 import org.jfree.data.xy.XYZDataset;
 
@@ -189,26 +194,21 @@ public class DrugVizualizer extends JFrame {
 				LinkedList<Group> groupList = mainGroup.getSubgroups();
 				/**
 				 * Test series
-				
-				addSerie(dataset, 3, 3, 2, "Test");
-				addSerie(dataset, 3, 3, 2.1, "Test3");
-				addSerie(dataset, -8, -3, 1, "Test2");
-				addSerie(dataset, 3, 3, 2, "Tesewqt");
-				addSerie(dataset, 3, 3, 2.1, "Terest3");
-				addSerie(dataset, -8, -3, 1, "Terest2");
-				addSerie(dataset, 3, 3, 2, "Tet");
-				addSerie(dataset, 3, 3, 2.1, "Teset3");
-				addSerie(dataset, -8, -3, 1, "Tetgfst2");
-				addSerie(dataset, 3, 3, 2, "Tesrewt");
-				addSerie(dataset, 3, 3, 2.1, "Tesewt3");
-				addSerie(dataset, -8, -3, 1, "Teewst2");
-				addSerie(dataset, 3, 3, 2, "Tesewt");
-				addSerie(dataset, 3, 3, 2.1, "Teewst3");
-				addSerie(dataset, -8, -3, 1, "Testwewe2");
-				addSerie(dataset, 3, 3, 2, "Tesewewt");
-				addSerie(dataset, 3, 3, 2.1, "Test3ew");
-				addSerie(dataset, -8, -3, 1, "Test2dsfd");
- */
+				 * 
+				 * addSerie(dataset, 3, 3, 2, "Test"); addSerie(dataset, 3, 3,
+				 * 2.1, "Test3"); addSerie(dataset, -8, -3, 1, "Test2");
+				 * addSerie(dataset, 3, 3, 2, "Tesewqt"); addSerie(dataset, 3,
+				 * 3, 2.1, "Terest3"); addSerie(dataset, -8, -3, 1, "Terest2");
+				 * addSerie(dataset, 3, 3, 2, "Tet"); addSerie(dataset, 3, 3,
+				 * 2.1, "Teset3"); addSerie(dataset, -8, -3, 1, "Tetgfst2");
+				 * addSerie(dataset, 3, 3, 2, "Tesrewt"); addSerie(dataset, 3,
+				 * 3, 2.1, "Tesewt3"); addSerie(dataset, -8, -3, 1, "Teewst2");
+				 * addSerie(dataset, 3, 3, 2, "Tesewt"); addSerie(dataset, 3, 3,
+				 * 2.1, "Teewst3"); addSerie(dataset, -8, -3, 1, "Testwewe2");
+				 * addSerie(dataset, 3, 3, 2, "Tesewewt"); addSerie(dataset, 3,
+				 * 3, 2.1, "Test3ew"); addSerie(dataset, -8, -3, 1,
+				 * "Test2dsfd");
+				 */
 				dataset.setNotify(false);
 				switch (xAxis) {
 				case "Average number of drugs per patient":
@@ -219,7 +219,7 @@ public class DrugVizualizer extends JFrame {
 					}
 					break;
 				case "Average number of diseases per patient":
-					for (Group group : groupList) {						
+					for (Group group : groupList) {
 						addSerie(dataset, group.getAverageNumICDs(),
 								group.getCorrelationToGroup(mainGroup),
 								group.getSize(), group.getClassifier());
@@ -249,17 +249,28 @@ public class DrugVizualizer extends JFrame {
 	private void createBubbleChart(String chartHeadline, String xAxisLabel,
 			String yAxisLabel, XYZDataset dataset) {
 		JFreeChart bubbleChart = ChartFactory.createBubbleChart(chartHeadline,
-				xAxisLabel, yAxisLabel, dataset, PlotOrientation.VERTICAL, false, rootPaneCheckingEnabled, rootPaneCheckingEnabled);
-		if(!codeInputField.getText().equals("")){
+				xAxisLabel, yAxisLabel, dataset, PlotOrientation.VERTICAL,
+				false, rootPaneCheckingEnabled, rootPaneCheckingEnabled);
+		XYPlot xyPlot = (XYPlot) bubbleChart.getPlot();
+		xyPlot.setDomainCrosshairVisible(true);
+		xyPlot.setRangeCrosshairVisible(true);
+		NumberAxis domain = (NumberAxis) xyPlot.getDomainAxis();
+		domain.setRange(0.00, 5.00);
+		domain.setTickUnit(new NumberTickUnit(1));
+		domain.setVerticalTickLabels(true);
+		NumberAxis range = (NumberAxis) xyPlot.getRangeAxis();
+		range.setRange(-5.0, 5.0);
+		range.setTickUnit(new NumberTickUnit(1));
+		if (!codeInputField.getText().equals("")) {
 			remove(chart);
 			chart = new ChartPanel(bubbleChart);
 			add(chart);
 			validate();
 			repaint();
-		}else
+		} else
 			chart = new ChartPanel(bubbleChart);
-		chart.setMaximumDrawWidth( 1920 );
-		chart.setMaximumDrawHeight( 1200 );
+		chart.setMaximumDrawWidth(1920);
+		chart.setMaximumDrawHeight(1200);
 
 	}
 
