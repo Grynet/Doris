@@ -185,6 +185,7 @@ public class DrugVizualizer extends JFrame {
 	 * @param yAxis
 	 */
 	private void updateChart(String code, String xAxis, String yAxis) {
+		int zScale;
 		if (code.equals("")
 				|| (!(code.endsWith("_ATC")) && !(code.endsWith("_ICD")))) {
 			JOptionPane.showMessageDialog(null, "You must input a code");
@@ -210,19 +211,47 @@ public class DrugVizualizer extends JFrame {
 				 * "Test2dsfd");
 				 */
 				dataset.setNotify(false);
+				int checker = 0;
+				String sChecker;
+				int stringLength;
+				String scaleString;
 				switch (xAxis) {
 				case "Average number of drugs per patient":
+					/***Test***/
+					for(Group group : groupList){
+						if(group.getSize() > checker)
+							checker = group.getSize();
+					}
+					sChecker = checker+"";
+					stringLength = sChecker.length();
+					scaleString = ""+1;
+					for(int i = 1; i < stringLength; i++){
+						scaleString += 0;
+					}
+					zScale = Integer.parseInt(scaleString);
 					for (Group group : groupList) {
 						addSerie(dataset, group.getAverageNumATCs(),
 								group.getCorrelationToGroup(mainGroup),
-								group.getSize(), group.getClassifier());
+								group.getSize()/zScale, group.getClassifier());
 					}
 					break;
 				case "Average number of diseases per patient":
+					/***Test***/
+					for(Group group : groupList){
+						if(group.getSize() > checker)
+							checker = group.getSize();
+					}
+					sChecker = checker+"";
+					stringLength = sChecker.length();
+					scaleString = ""+1;
+					for(int i = 1; i < stringLength; i++){
+						scaleString += 0;
+					}
+					zScale = Integer.parseInt(scaleString);
 					for (Group group : groupList) {
 						addSerie(dataset, group.getAverageNumICDs(),
 								group.getCorrelationToGroup(mainGroup),
-								group.getSize(), group.getClassifier());
+								group.getSize()/zScale, group.getClassifier());
 					}
 					break;
 				default:
@@ -250,17 +279,17 @@ public class DrugVizualizer extends JFrame {
 			String yAxisLabel, XYZDataset dataset) {
 		JFreeChart bubbleChart = ChartFactory.createBubbleChart(chartHeadline,
 				xAxisLabel, yAxisLabel, dataset, PlotOrientation.VERTICAL,
-				false, rootPaneCheckingEnabled, rootPaneCheckingEnabled);
+				true, rootPaneCheckingEnabled, rootPaneCheckingEnabled);
 		XYPlot xyPlot = (XYPlot) bubbleChart.getPlot();
 		xyPlot.setDomainCrosshairVisible(true);
 		xyPlot.setRangeCrosshairVisible(true);
-		NumberAxis domain = (NumberAxis) xyPlot.getDomainAxis();
-		domain.setRange(0.00, 5.00);
-		domain.setTickUnit(new NumberTickUnit(1));
-		domain.setVerticalTickLabels(true);
-		NumberAxis range = (NumberAxis) xyPlot.getRangeAxis();
-		range.setRange(-5.0, 5.0);
-		range.setTickUnit(new NumberTickUnit(1));
+		//NumberAxis domain = (NumberAxis) xyPlot.getDomainAxis();
+		//domain.setRange(0.00, 5.00);
+		//domain.setTickUnit(new NumberTickUnit(1));
+		//domain.setVerticalTickLabels(true);
+		//NumberAxis range = (NumberAxis) xyPlot.getRangeAxis();
+		//range.setRange(-5.0, 5.0);
+		//range.setTickUnit(new NumberTickUnit(1));
 		if (!codeInputField.getText().equals("")) {
 			remove(chart);
 			chart = new ChartPanel(bubbleChart);
