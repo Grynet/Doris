@@ -21,6 +21,7 @@ import javax.swing.JTextField;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.DefaultXYZDataset;
 import org.jfree.data.xy.XYZDataset;
 
@@ -188,7 +189,7 @@ public class DrugVizualizer extends JFrame {
 				LinkedList<Group> groupList = mainGroup.getSubgroups();
 				/**
 				 * Test series
-				 */
+				
 				addSerie(dataset, 3, 3, 2, "Test");
 				addSerie(dataset, 3, 3, 2.1, "Test3");
 				addSerie(dataset, -8, -3, 1, "Test2");
@@ -207,7 +208,8 @@ public class DrugVizualizer extends JFrame {
 				addSerie(dataset, 3, 3, 2, "Tesewewt");
 				addSerie(dataset, 3, 3, 2.1, "Test3ew");
 				addSerie(dataset, -8, -3, 1, "Test2dsfd");
-
+ */
+				dataset.setNotify(false);
 				switch (xAxis) {
 				case "Average number of drugs per patient":
 					for (Group group : groupList) {
@@ -226,6 +228,7 @@ public class DrugVizualizer extends JFrame {
 				default:
 					break;
 				}
+				dataset.setNotify(true);
 				createBubbleChart(code, xAxis, yAxis, dataset);
 				chart.validate();
 				chart.repaint();
@@ -246,7 +249,7 @@ public class DrugVizualizer extends JFrame {
 	private void createBubbleChart(String chartHeadline, String xAxisLabel,
 			String yAxisLabel, XYZDataset dataset) {
 		JFreeChart bubbleChart = ChartFactory.createBubbleChart(chartHeadline,
-				xAxisLabel, yAxisLabel, dataset);
+				xAxisLabel, yAxisLabel, dataset, PlotOrientation.VERTICAL, false, rootPaneCheckingEnabled, rootPaneCheckingEnabled);
 		if(!codeInputField.getText().equals("")){
 			remove(chart);
 			chart = new ChartPanel(bubbleChart);
