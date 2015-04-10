@@ -279,7 +279,7 @@ public class DrugVizualizer extends JFrame {
 			String yAxisLabel, XYZDataset dataset) {
 		JFreeChart bubbleChart = ChartFactory.createBubbleChart(chartHeadline,
 				xAxisLabel, yAxisLabel, dataset, PlotOrientation.VERTICAL,
-				true, rootPaneCheckingEnabled, rootPaneCheckingEnabled);
+				false, rootPaneCheckingEnabled, rootPaneCheckingEnabled);
 		XYPlot xyPlot = (XYPlot) bubbleChart.getPlot();
 		xyPlot.setDomainCrosshairVisible(true);
 		xyPlot.setRangeCrosshairVisible(true);
