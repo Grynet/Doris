@@ -185,7 +185,6 @@ public class DrugVizualizer extends JFrame {
 	 * @param yAxis
 	 */
 	private void updateChart(String code, String xAxis, String yAxis) {
-		int zScale;
 		if (code.equals("")
 				|| (!(code.endsWith("_ATC")) && !(code.endsWith("_ICD")))) {
 			JOptionPane.showMessageDialog(null, "You must input a code");
@@ -193,65 +192,53 @@ public class DrugVizualizer extends JFrame {
 			try {
 				Group mainGroup = Population.getCodeGroup(code);
 				LinkedList<Group> groupList = mainGroup.getSubgroups();
-				/**
-				 * Test series
-				 * 
-				 * addSerie(dataset, 3, 3, 2, "Test"); addSerie(dataset, 3, 3,
-				 * 2.1, "Test3"); addSerie(dataset, -8, -3, 1, "Test2");
-				 * addSerie(dataset, 3, 3, 2, "Tesewqt"); addSerie(dataset, 3,
-				 * 3, 2.1, "Terest3"); addSerie(dataset, -8, -3, 1, "Terest2");
-				 * addSerie(dataset, 3, 3, 2, "Tet"); addSerie(dataset, 3, 3,
-				 * 2.1, "Teset3"); addSerie(dataset, -8, -3, 1, "Tetgfst2");
-				 * addSerie(dataset, 3, 3, 2, "Tesrewt"); addSerie(dataset, 3,
-				 * 3, 2.1, "Tesewt3"); addSerie(dataset, -8, -3, 1, "Teewst2");
-				 * addSerie(dataset, 3, 3, 2, "Tesewt"); addSerie(dataset, 3, 3,
-				 * 2.1, "Teewst3"); addSerie(dataset, -8, -3, 1, "Testwewe2");
-				 * addSerie(dataset, 3, 3, 2, "Tesewewt"); addSerie(dataset, 3,
-				 * 3, 2.1, "Test3ew"); addSerie(dataset, -8, -3, 1,
-				 * "Test2dsfd");
-				 */
 				dataset.setNotify(false);
-				int checker = 0;
-				String sChecker;
-				int stringLength;
-				String scaleString;
+				double maxPixelValue = 0;
+				double minPixelValue = Double.MAX_VALUE;
 				switch (xAxis) {
 				case "Average number of drugs per patient":
-					/***Test***/
-					for(Group group : groupList){
-						if(group.getSize() > checker)
-							checker = group.getSize();
-					}
-					sChecker = checker+"";
-					stringLength = sChecker.length();
-					scaleString = ""+1;
-					for(int i = 1; i < stringLength; i++){
-						scaleString += 0;
-					}
-					zScale = Integer.parseInt(scaleString);
 					for (Group group : groupList) {
-						addSerie(dataset, group.getAverageNumATCs(),
+						if (group.getAverageNumATCs() > maxPixelValue)
+							maxPixelValue = group.getAverageNumATCs();
+					}
+					for (Group group : groupList) {
+						if (group.getCorrelationToGroup(mainGroup) < minPixelValue)
+							minPixelValue = group.getCorrelationToGroup(mainGroup);
+					}
+					System.out.println("Max: " + maxPixelValue);
+					System.out.println("Min: " + minPixelValue);
+
+					for (Group group : groupList) {
+						System.out.println(group.getSize() % maxPixelValue
+								+ minPixelValue);
+						addSerie(
+								dataset,
+								group.getAverageNumATCs(),
 								group.getCorrelationToGroup(mainGroup),
-								group.getSize()/zScale, group.getClassifier());
+								(group.getSize() % maxPixelValue) + minPixelValue,
+								group.getClassifier());
 					}
 					break;
 				case "Average number of diseases per patient":
-					/***Test***/
-					for(Group group : groupList){
-						if(group.getSize() > checker)
-							checker = group.getSize();
-					}
-					sChecker = checker+"";
-					stringLength = sChecker.length();
-					scaleString = ""+1;
-					for(int i = 1; i < stringLength; i++){
-						scaleString += 0;
-					}
-					zScale = Integer.parseInt(scaleString);
 					for (Group group : groupList) {
-						addSerie(dataset, group.getAverageNumICDs(),
+						if (group.getAverageNumATCs() > maxPixelValue)
+							maxPixelValue = group.getAverageNumATCs();
+					}
+					for (Group group : groupList) {
+						if (group.getCorrelationToGroup(mainGroup) < minPixelValue)
+							minPixelValue = group.getCorrelationToGroup(mainGroup);
+					}
+					System.out.println("Max: " + maxPixelValue);
+					System.out.println("Min: " + minPixelValue);
+					for (Group group : groupList) {
+						System.out.println(group.getSize() % maxPixelValue
+								+ minPixelValue);
+						addSerie(
+								dataset,
+								group.getAverageNumICDs(),
 								group.getCorrelationToGroup(mainGroup),
-								group.getSize()/zScale, group.getClassifier());
+								(group.getSize() % maxPixelValue) + minPixelValue,
+								group.getClassifier());
 					}
 					break;
 				default:
@@ -283,13 +270,13 @@ public class DrugVizualizer extends JFrame {
 		XYPlot xyPlot = (XYPlot) bubbleChart.getPlot();
 		xyPlot.setDomainCrosshairVisible(true);
 		xyPlot.setRangeCrosshairVisible(true);
-		//NumberAxis domain = (NumberAxis) xyPlot.getDomainAxis();
-		//domain.setRange(0.00, 5.00);
-		//domain.setTickUnit(new NumberTickUnit(1));
-		//domain.setVerticalTickLabels(true);
-		//NumberAxis range = (NumberAxis) xyPlot.getRangeAxis();
-		//range.setRange(-5.0, 5.0);
-		//range.setTickUnit(new NumberTickUnit(1));
+		 NumberAxis domain = (NumberAxis) xyPlot.getDomainAxis();
+		 domain.setRange(0.00, 5.00);
+		// domain.setTickUnit(new NumberTickUnit(1));
+		// domain.setVerticalTickLabels(true);
+		 NumberAxis range = (NumberAxis) xyPlot.getRangeAxis();
+		 range.setRange(-5.0, 5.0);
+		// range.setTickUnit(new NumberTickUnit(1));
 		if (!codeInputField.getText().equals("")) {
 			remove(chart);
 			chart = new ChartPanel(bubbleChart);
