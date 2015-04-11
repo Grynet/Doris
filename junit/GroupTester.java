@@ -21,8 +21,8 @@ import doris.backend.Population;
  */
 public class GroupTester {
 	
-	String filePath = "F:/test.csv"; //Choose the correct path to the file
-	String groupCode = "N02AA01_ATC";
+	String filePath = "K:/D642-raw-data-dd.csv"; //Choose the correct path to the file
+	String groupCode = "N189_ICD";
 	
 	@Before
 	public void setUp() {			
@@ -38,7 +38,7 @@ public class GroupTester {
 	 * them out and print some fact about the group.
 	 */
 
-	@Test
+//	@Test
 	public void testGetSubgroups(){
 		Group group = Population.getCodeGroup(groupCode);	
 		assertNotEquals(group, null);
@@ -85,7 +85,7 @@ public class GroupTester {
 	 * value is for a subgroup of a group.
 	 */
 	
-//	@Test
+	@Test
 	public void testCorrelation(){
 		Group group = Population.getCodeGroup(groupCode);	
 		assertNotEquals(group, null);
@@ -136,7 +136,7 @@ public class GroupTester {
 	 * Prints out information about group and the highesy/lowest ICD/ATC average,
 	 */
 	
-//	@Test
+	@Test
 	public void testAverage(){
 		Group group = Population.getCodeGroup(groupCode);	
 		assertNotEquals(group, null);

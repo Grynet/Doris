@@ -1,13 +1,13 @@
 package doris.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import javax.swing.JButton;
@@ -22,11 +22,8 @@ import javax.swing.JTextField;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYBubbleRenderer;
 import org.jfree.data.xy.DefaultXYZDataset;
 import org.jfree.data.xy.XYZDataset;
 
@@ -192,66 +189,53 @@ public class DrugVizualizer extends JFrame {
 			try {
 				Group mainGroup = Population.getCodeGroup(code);
 				LinkedList<Group> groupList = mainGroup.getSubgroups();
-				dataset.setNotify(false);
-				double maxPixelValue = 0;
-				double minPixelValue = Double.MAX_VALUE;
-				switch (xAxis) {
+				AverageRetriever retriever = null;
+							
+				switch(xAxis){
 				case "Average number of drugs per patient":
-					for (Group group : groupList) {
-						if (group.getAverageNumATCs() > maxPixelValue)
-							maxPixelValue = group.getAverageNumATCs();
-					}
-					for (Group group : groupList) {
-						if (group.getCorrelationToGroup(mainGroup) < minPixelValue)
-							minPixelValue = group.getCorrelationToGroup(mainGroup);
-					}
-					System.out.println("Max: " + maxPixelValue);
-					System.out.println("Min: " + minPixelValue);
-
-					for (Group group : groupList) {
-						System.out.println(group.getSize() % maxPixelValue
-								+ minPixelValue);
-						addSerie(
-								dataset,
-								group.getAverageNumATCs(),
-								group.getCorrelationToGroup(mainGroup),
-								(group.getSize() % maxPixelValue) + minPixelValue,
-								group.getClassifier());
-					}
+					retriever = new ATCAverageRetriever();
 					break;
 				case "Average number of diseases per patient":
-					for (Group group : groupList) {
-						if (group.getAverageNumATCs() > maxPixelValue)
-							maxPixelValue = group.getAverageNumATCs();
-					}
-					for (Group group : groupList) {
-						if (group.getCorrelationToGroup(mainGroup) < minPixelValue)
-							minPixelValue = group.getCorrelationToGroup(mainGroup);
-					}
-					System.out.println("Max: " + maxPixelValue);
-					System.out.println("Min: " + minPixelValue);
-					for (Group group : groupList) {
-						System.out.println(group.getSize() % maxPixelValue
-								+ minPixelValue);
-						addSerie(
-								dataset,
-								group.getAverageNumICDs(),
-								group.getCorrelationToGroup(mainGroup),
-								(group.getSize() % maxPixelValue) + minPixelValue,
-								group.getClassifier());
-					}
-					break;
-				default:
-					break;
+					retriever = new ICDAverageRetriever();
+					break;				
+				}				
+				
+				double zRatio = 0;				
+				HashMap<String, GroupContainer> container = new HashMap<>();
+				
+				for(Group group : groupList){					
+					double groupAverage = retriever.getAverage(group);
+					int groupSize = group.getSize();
+					double correlation = group.getCorrelationToGroup(mainGroup);
+					String classifier = group.getClassifier();
+					
+					zRatio = (correlation > zRatio) ? correlation : zRatio;
+					container.put(classifier, new GroupContainer(groupAverage, groupSize, correlation));					
 				}
-				dataset.setNotify(true);
+				
+				addSeries(zRatio, container);		
 				createBubbleChart(code, xAxis, yAxis, dataset);
 				chart.validate();
 				chart.repaint();
+		
 			} catch (NullPointerException e) {
 				JOptionPane.showMessageDialog(null, "Nobody with that code.");
 			}
 		}
+	}
+
+	private void addSeries(double zRatio,HashMap<String, GroupContainer> container) {
+		dataset.setNotify(false);			
+		for(String code : container.keySet()){			
+			GroupContainer con = container.get(code);			
+			double[] xArray = new double[] { con.groupAverage };
+			double[] yArray = new double[] { con.correlation };
+			double[] zArray = new double[] { con.groupSize%zRatio/6 };
+			double[][] serie = new double[][] { xArray, yArray, zArray };
+			dataset.addSeries(code, serie);		
+			
+		}		
+		dataset.setNotify(true);	
 	}
 
 	/**
@@ -267,16 +251,10 @@ public class DrugVizualizer extends JFrame {
 		JFreeChart bubbleChart = ChartFactory.createBubbleChart(chartHeadline,
 				xAxisLabel, yAxisLabel, dataset, PlotOrientation.VERTICAL,
 				false, rootPaneCheckingEnabled, rootPaneCheckingEnabled);
-		XYPlot xyPlot = (XYPlot) bubbleChart.getPlot();
-		xyPlot.setDomainCrosshairVisible(true);
-		xyPlot.setRangeCrosshairVisible(true);
-		 NumberAxis domain = (NumberAxis) xyPlot.getDomainAxis();
-		 domain.setRange(0.00, 5.00);
-		// domain.setTickUnit(new NumberTickUnit(1));
-		// domain.setVerticalTickLabels(true);
-		 NumberAxis range = (NumberAxis) xyPlot.getRangeAxis();
-		 range.setRange(-5.0, 5.0);
-		// range.setTickUnit(new NumberTickUnit(1));
+		XYBubbleRenderer bubbleRenderer = new XYBubbleRenderer(XYBubbleRenderer.SCALE_ON_RANGE_AXIS);		
+		
+		bubbleChart.getXYPlot().setRenderer(bubbleRenderer);		
+	
 		if (!codeInputField.getText().equals("")) {
 			remove(chart);
 			chart = new ChartPanel(bubbleChart);
@@ -296,23 +274,6 @@ public class DrugVizualizer extends JFrame {
 
 	}
 
-	/**
-	 * Support Method for "updateChart".
-	 * 
-	 * @param ds
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @param nameOfSerie
-	 */
-	private void addSerie(DefaultXYZDataset ds, double x, double y, double z,
-			String nameOfSerie) {
-		double[] xArray = new double[] { x };
-		double[] yArray = new double[] { y };
-		double[] zArray = new double[] { z };
-		double[][] serie = new double[][] { xArray, yArray, zArray };
-		ds.addSeries(nameOfSerie, serie);
-	}
 
 	public static void main(String[] args) {
 		new DrugVizualizer();
