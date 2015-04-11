@@ -1,16 +1,7 @@
 package junit;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-
 import org.junit.Test;
-
-import doris.backend.Group;
-import doris.backend.Patient;
 import doris.backend.Population;
 
 public class PopulationTester {
