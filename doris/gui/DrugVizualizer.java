@@ -22,6 +22,8 @@ import javax.swing.JTextField;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.labels.BubbleXYItemLabelGenerator;
+import org.jfree.chart.labels.StandardXYZToolTipGenerator;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.xy.XYBubbleRenderer;
 import org.jfree.data.xy.DefaultXYZDataset;
@@ -215,6 +217,7 @@ public class DrugVizualizer extends JFrame {
 				
 				addSeries(zRatio, container);		
 				createBubbleChart(code, xAxis, yAxis, dataset);
+				chart.setDisplayToolTips(true);
 				chart.validate();
 				chart.repaint();
 		
@@ -250,9 +253,9 @@ public class DrugVizualizer extends JFrame {
 			String yAxisLabel, XYZDataset dataset) {
 		JFreeChart bubbleChart = ChartFactory.createBubbleChart(chartHeadline,
 				xAxisLabel, yAxisLabel, dataset, PlotOrientation.VERTICAL,
-				false, rootPaneCheckingEnabled, rootPaneCheckingEnabled);
+				false, true, rootPaneCheckingEnabled);
 		XYBubbleRenderer bubbleRenderer = new XYBubbleRenderer(XYBubbleRenderer.SCALE_ON_RANGE_AXIS);		
-		
+		bubbleRenderer.setBaseToolTipGenerator(new StandardXYZToolTipGenerator());
 		bubbleChart.getXYPlot().setRenderer(bubbleRenderer);		
 	
 		if (!codeInputField.getText().equals("")) {
