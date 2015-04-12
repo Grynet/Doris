@@ -40,15 +40,14 @@ import doris.backend.Population;
 public class DrugVizualizer extends JFrame {
 	private ChartPanel chart;
 	private JComboBox<String> xAxisDropDown;
-	private DefaultXYZDataset dataset;
+	
 	private String xAxisSelected;
 	private JTextField codeInputField;
 	private JTextField pathInputField;
 	private JButton pathButton;
 
 	DrugVizualizer() {
-		super("Doris 1.0");
-		dataset = createDataset();
+		super("Doris 1.0");		
 
 		/********************************************************************************************
 		 * Setup JFrame
@@ -161,7 +160,7 @@ public class DrugVizualizer extends JFrame {
 						"Correlation");
 			}
 		});
-		createBubbleChart("No code entered", "", "Correlation", dataset);
+		createBubbleChart("No code entered", "", "Correlation", new DefaultXYZDataset());
 		add(northPanel, BorderLayout.NORTH);
 		// Center
 		add(chart);
@@ -221,7 +220,7 @@ public class DrugVizualizer extends JFrame {
 					container.put(classifier, new GroupContainer(groupAverage, groupSize, correlation));					
 				}
 				
-				addSeries(zRatio, container);		
+				DefaultXYZDataset dataset = addSeries(zRatio, container);		
 				createBubbleChart(code, xAxis, yAxis, dataset);
 				chart.setDisplayToolTips(true);
 				chart.validate();
@@ -233,7 +232,8 @@ public class DrugVizualizer extends JFrame {
 		}
 	}
 
-	private void addSeries(double zRatio,HashMap<String, GroupContainer> container) {
+	private DefaultXYZDataset addSeries(double zRatio,HashMap<String, GroupContainer> container) {
+		DefaultXYZDataset dataset = new DefaultXYZDataset();
 		dataset.setNotify(false);			
 		for(String code : container.keySet()){			
 			GroupContainer con = container.get(code);			
@@ -245,6 +245,7 @@ public class DrugVizualizer extends JFrame {
 			
 		}		
 		dataset.setNotify(true);	
+		return dataset;
 	}
 
 	/**
@@ -275,13 +276,7 @@ public class DrugVizualizer extends JFrame {
 		chart.setMaximumDrawWidth(1920);
 		chart.setMaximumDrawHeight(1200);
 
-	}
-
-	private DefaultXYZDataset createDataset() {
-		DefaultXYZDataset dataset = new DefaultXYZDataset();
-		return dataset;
-
-	}
+	}	
 
 
 	public static void main(String[] args) {
