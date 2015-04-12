@@ -57,14 +57,7 @@ public class Producer {
 		work.put(CSVParser.POISON_PILL);		
 		doneSignal.await();
 		
-		for(Integer patientID : patientCodes.keySet()){
-			HashMap<String, LocalDateTime> codes = patientCodes.get(patientID);
-		
-			for(String code: codes.keySet()){
-				if(code.trim().equals(""))
-					System.out.printf("Empty code!");
-				
-			}
+		for(Integer patientID : patientCodes.keySet()){			
 			Patient patient = new Patient(patientID, patientCodes.get(patientID));
 			patientMap.put(patientID, patient);
 		}			
