@@ -108,9 +108,9 @@ public class DrugVizualizer extends JFrame {
 					JOptionPane.showMessageDialog(null,
 							"You must input a file path");
 				} else {
-					try {
+					try {						
 						Population.init(pathInputField.getText().replaceAll(
-								"\\\\", "/"));
+								"\\\\", "/"));						
 						// set all components to editable
 						codeInputField.setEditable(true);
 						xAxisDropDown.setEnabled(true);
@@ -118,7 +118,13 @@ public class DrugVizualizer extends JFrame {
 					} catch (FileNotFoundException fnf) {
 						JOptionPane.showMessageDialog(null,
 								"Could not find the file");
-					} catch (InterruptedException e) {
+					}catch (IllegalArgumentException iae) {
+						JOptionPane.showMessageDialog(null,
+								iae.getMessage());
+					}catch (OutOfMemoryError o) {
+						JOptionPane.showMessageDialog(null,
+								"Out of memory");
+					} catch (InterruptedException ie) {
 						JOptionPane.showMessageDialog(null,
 								"Instantiation interrupted unexpectedly");
 					} catch (IOException e) {
@@ -165,9 +171,10 @@ public class DrugVizualizer extends JFrame {
 		add(southPanel, BorderLayout.SOUTH);
 		southPanel.add(new JLabel("X-axis"));
 		southPanel.add(xAxisDropDown);
-		setVisible(true);
-		setExtendedState(Frame.MAXIMIZED_BOTH);
-		pack();
+		setVisible(true);		
+		pack();		
+		setLocationRelativeTo(null);
+		
 		setResizable(true);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 

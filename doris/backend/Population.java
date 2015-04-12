@@ -9,18 +9,18 @@ import doris.backend.support.Producer;
 
 public final class Population {
 
-	final static private ConcurrentHashMap<Integer, Patient> PATIENTS = new ConcurrentHashMap<>();
-	final static private ConcurrentHashMap<String, HashSet<Integer>> CODE_GROUPS = new ConcurrentHashMap<>();
+	final static private ConcurrentHashMap<Integer, Patient> PATIENTS = new ConcurrentHashMap<>(200000);
+	final static private ConcurrentHashMap<String, HashSet<Integer>> CODE_GROUPS = new ConcurrentHashMap<>(500);
 	final static private Producer PRODUCER = new Producer();
 	
 	
 	private Population(){}
 	
-	public static void init(String filePath) throws FileNotFoundException, InterruptedException, IOException {	
+	public static void init(String filePath) throws FileNotFoundException, OutOfMemoryError, InterruptedException, IOException {	
 		if(!PATIENTS.isEmpty()){		
 			PATIENTS.clear();	
 			CODE_GROUPS.clear();			
-		}		
+		}	
 		PRODUCER.parseCSVFile(filePath, PATIENTS, CODE_GROUPS);		
 	}
 	

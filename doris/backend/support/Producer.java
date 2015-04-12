@@ -1,6 +1,7 @@
 package doris.backend.support;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -28,16 +29,23 @@ public class Producer {
 	
 	//make more effective and increase readability
 	
-	public void parseCSVFile(String filePath, ConcurrentHashMap<Integer,Patient> patientMap, ConcurrentHashMap<String, HashSet<Integer>> codeGroupMap) throws InterruptedException, FileNotFoundException, IOException{
+	public void parseCSVFile(String filePath, ConcurrentHashMap<Integer,Patient> patientMap, ConcurrentHashMap<String, HashSet<Integer>> codeGroupMap) throws IllegalArgumentException, InterruptedException, FileNotFoundException, IOException{
+		File file = new File(filePath);
+		if((file.length()/1000000) > 262 ){ //find out if file size > 250MB on disc and 262MB loaded into Java	
+			System.out.println(file.length()/1000000);
+			throw new IllegalArgumentException("Max file size 250MB!");
+		}
+			
+		
 		BlockingQueue<String> work = new ArrayBlockingQueue<String>(BUFFER_SIZE);			
-		ConcurrentHashMap<Integer, HashMap<String, LocalDateTime>> patientCodes = new ConcurrentHashMap<>();
+		ConcurrentHashMap<Integer, HashMap<String, LocalDateTime>> patientCodes = new ConcurrentHashMap<>(200000);
 		CountDownLatch doneSignal = new CountDownLatch(CPU_COUNT);	
 		
 		for(int i = 0; i < CPU_COUNT; i++){
 			XCUTOR.execute(new CSVParser(work, doneSignal, patientCodes, codeGroupMap));
 		}
 		
-		BufferedReader br = new BufferedReader(new FileReader(filePath));
+		BufferedReader br = new BufferedReader(new FileReader(file));
 		String line = "";
 		br.readLine(); //reads past first line which is a format description line
 		while((line = br.readLine()) != null){			
