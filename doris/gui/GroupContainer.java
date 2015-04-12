@@ -1,5 +1,12 @@
 package doris.gui;
 
+/**
+ * Container class that stores Group values.
+ * 
+ * @author Fredrik Nystad
+ *
+ */
+
 public class GroupContainer {
 	
 	public final double groupAverage;
