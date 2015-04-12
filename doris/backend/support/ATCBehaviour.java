@@ -14,7 +14,7 @@ import doris.backend.Patient;
 public class ATCBehaviour implements CodeTypeBehaviour {
 
 	@Override
-	public HashSet<String> getCodes(Patient patient, String code) {
+	public HashSet<String> getCodes(Patient patient) {
 		return patient.getICDs();	
 		// return patient.getICDsAfterATC(code);		
 	}

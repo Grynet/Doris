@@ -13,7 +13,7 @@ import doris.backend.Patient;
 public class ICDBehaviour implements CodeTypeBehaviour{
 
 	@Override
-	public HashSet<String> getCodes(Patient patient, String code) {
+	public HashSet<String> getCodes(Patient patient) {
 		return patient.getATCs();
 		// return patient.getATCsBeforeICD(code);		
 	}

@@ -34,7 +34,7 @@ public class Group {
 	private void setSubgroups(HashSet<Integer> patientIDs){		
 		for(int patientID : patientIDs){
 			Patient patient = Population.getPatient(patientID);
-			HashSet<String> codes = BEHAVIOUR.getCodes(patient,GROUP_CLASSIFIER);
+			HashSet<String> codes = BEHAVIOUR.getCodes(patient);
 			for(String code : codes){
 				HashSet<Integer> groupPatients;
 				if((groupPatients = SUBGROUPS.get(code)) != null)

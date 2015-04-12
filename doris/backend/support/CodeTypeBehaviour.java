@@ -13,5 +13,5 @@ import doris.backend.Patient;
 
 public interface CodeTypeBehaviour {
 	
-	public HashSet<String> getCodes(Patient patient, String code);
+	public HashSet<String> getCodes(Patient patient);
 }
