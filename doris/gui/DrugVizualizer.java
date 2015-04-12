@@ -1,7 +1,6 @@
 package doris.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -22,7 +21,6 @@ import javax.swing.JTextField;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.labels.BubbleXYItemLabelGenerator;
 import org.jfree.chart.labels.StandardXYZToolTipGenerator;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.xy.XYBubbleRenderer;
@@ -38,6 +36,7 @@ import doris.backend.Population;
  * @author Xceed
  *
  */
+@SuppressWarnings("serial")
 public class DrugVizualizer extends JFrame {
 	private ChartPanel chart;
 	private JComboBox<String> xAxisDropDown;
