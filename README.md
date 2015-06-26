@@ -1,5 +1,7 @@
 #Doris
-Updated: 26 June 2015
+`Updated: 26 June 2015`
+
+A visualization system that uses EHRs to visualize possible correlations between drugs and diagnoses.
 
 ## UML
 
